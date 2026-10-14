@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warm: {
+                            bg: '#fcf8f2',
+                            card: '#ffffff',
+                            border: '#e7d7c1',
+                            accent: '#b45309',
+                            terracotta: '#c2410c',
+                            amber: '#d97706',
+                            muted: '#78716c'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background-color: #fcf8f2;
+            color: #292524;
+        }
+        .warm-glow {
+            box-shadow: 0 10px 30px rgba(180, 83, 9, 0.08);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fcf8f2; }
+        ::-webkit-scrollbar-thumb { background: #d7ccc8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bcaaa4; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-white">
+    <header class="border-b border-amber-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-amber-700 via-terracotta-600 to-orange-700 bg-clip-text text-transparent">
+                        Homework 1 — Public-key Cryptography Private Key &rarr; Public key in Etherum
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+        <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm">
+            <h3 class="text-lg font-bold text-amber-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-play text-amber-600"></i> Visual Rappresentation \(Curve toy: y^2 \equiv x^3 + 7 \pmod{17}\)
+            </h3>
+            <div class="bg-amber-50/70 border border-amber-200 p-4 rounded-2xl mb-6 flex flex-wrap items-center justify-center gap-4">
+                <label for="kInput" class="text-amber-900 font-semibold text-sm">Scalar Value \(k\) (1 to 25):</label>
+                <input type="number" id="kInput" value="12" min="1" max="25" class="w-20 px-3 py-2 text-center font-bold text-amber-900 bg-white border border-amber-300 rounded-xl focus:outline-none focus:border-amber-500 shadow-sm">
+                <button onclick="runSimulation()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-terracotta-600 hover:from-amber-500 hover:to-terracotta-500 text-white font-bold text-sm shadow-md transition-all">
+                    Start simulation
+                </button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch mb-6">
+                <div class="bg-amber-50/40 border border-amber-200 p-6 rounded-2xl flex flex-col items-center justify-center">
+                    <canvas id="curveCanvas" width="240" height="240" class="rounded-xl border border-amber-300 bg-white shadow-sm"></canvas>
+                    <div class="status text-amber-700 font-bold text-xs mt-4" id="statusText">Ready</div>
+                </div>
+                <div class="bg-amber-50/40 border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
+                    <div class="calc-box font-mono text-xs text-stone-700">
+                        <p class="text-amber-800 font-bold mb-2">Algebraic Details (Point Addition/Doubling):</p>
+                        <span id="algebraDetails">Enter scalar \(k\) and run simulation to visualize modular dynamics and cyclic behavior beyond order \(n=9\).</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-amber-50/40 border border-amber-200 rounded-2xl p-4 max-h-72 overflow-y-auto">
+                <table class="w-full text-left border-collapse text-xs text-stone-700">
+                    <thead>
+                        <tr class="border-b border-amber-200 text-amber-900 sticky top-0 bg-amber-50">
+                            <th class="p-3 text-center">Step (\(k\))</th>
+                            <th class="p-3 text-center">Algebraic Operation</th>
+                            <th class="p-3 text-center">Resulting Coordinates \((x, y)\)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-amber-100">
+                        <tr><td colspan="3" class="p-4 text-center text-stone-400">No calculation performed yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white border border-amber-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
+                <span class="text-xs font-semibold text-stone-500 uppercase">Subgroup Points</span>
+                <span class="text-lg font-bold text-amber-700 font-mono">8 (+ Neutral)</span>
+            </div>
+            <div class="bg-white border border-amber-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
+                <span class="text-xs font-semibold text-stone-500 uppercase">Distinct (x) (Subgroup)</span>
+                <span class="text-lg font-bold text-terracotta-700 font-mono">4</span>
+            </div>
+            <div class="bg-white border border-amber-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
+                <span class="text-xs font-semibold text-stone-500 uppercase">Pearson (r(j, x))</span>
+                <span class="text-lg font-bold text-orange-700 font-mono">0.00</span>
+            </div>
+            <div class="bg-white border border-amber-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
+                <span class="text-xs font-semibold text-stone-500 uppercase">Pearson (r(j, y))</span>
+                <span class="text-lg font-bold text-amber-800 font-mono">0.30</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white border border-amber-200 p-6 rounded-3xl flex flex-col justify-between shadow-sm">
+                <div>
+                    <h4 class="text-base font-bold text-stone-900 mb-1">1. Subgroup Coordinate \(x\) Frequency</h4>
+                    <p class="text-xs text-stone-500 mb-4">Distribution across active points in \(\langle G \rangle\) (\(k=1 \dots 8\))</p>
+                    <canvas id="chartXFreq" width="520" height="200" class="bg-amber-50/50 rounded-2xl border border-amber-200 mx-auto block shadow-sm"></canvas>
+                </div>
+                <div class="mt-4 p-3 bg-amber-50/60 border border-amber-200 rounded-xl text-xs text-stone-700">
+                    <strong>Analysis:</strong> Each distinct \(x\) coordinate (\(1, 2, 5, 12\)) appears exactly twice within the cyclic subgroup, associated with symmetric \(y\) values.
+                </div>
+            </div>
+
+            <div class="bg-white border border-amber-200 p-6 rounded-3xl flex flex-col justify-between shadow-sm">
+                <div>
+                    <h4 class="text-base font-bold text-stone-900 mb-1">1.2 Subgroup Coordinate \(y\) Frequency</h4>
+                    <p class="text-xs text-stone-500 mb-4">Distribution of \(y\) values across \(\langle G \rangle\) (\(k=1 \dots 8\))</p>
+                    <canvas id="chartYFreq" width="520" height="200" class="bg-amber-50/50 rounded-2xl border border-amber-200 mx-auto block shadow-sm"></canvas>
+                </div>
+                <div class="mt-4 p-3 bg-amber-50/60 border border-amber-200 rounded-xl text-xs text-stone-700">
+                    <strong>Analysis:</strong> Each active \(y\) coordinate in the subgroup (\(5, 10, 9, 1, 16, 8, 7, 12\)) appears exactly once during the 8 steps.
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white border border-amber-200 p-6 rounded-3xl flex flex-col justify-between shadow-sm">
+                <div>
+                    <h4 class="text-base font-bold text-stone-900 mb-1"> 2. Bit Frequency Histogram</h4>
+                    <p class="text-xs text-stone-500 mb-4">Binary bit occurrence analysis (Bit 0 to Bit 4)</p>
+                    <canvas id="chartBitDist" width="520" height="200" class="bg-amber-50/50 rounded-2xl border border-amber-200 mx-auto block shadow-sm"></canvas>
+                </div>
+                <div class="mt-4 p-3 bg-amber-50/60 border border-amber-200 rounded-xl text-xs text-stone-700">
+                    <strong>Analysis:</strong> Bit \(b_4\) is active exclusively at \(y=16\) (\(10000_2\)), highlighting structural constraints within the finite field representation.
+                </div>
+            </div>
+
+            <div class="bg-white border border-amber-200 p-6 rounded-3xl flex flex-col justify-between shadow-sm">
+                <div>
+                    <h4 class="text-base font-bold text-stone-900 mb-1">3. Correlation Trend \(k\) vs \(x\)</h4>
+                    <p class="text-xs text-stone-500 mb-4">Pearson \(r = 0.00\) (absence of linearity)</p>
+                    <canvas id="chartCorrelation" width="520" height="200" class="bg-amber-50/50 rounded-2xl border border-amber-200 mx-auto block shadow-sm"></canvas>
+                </div>
+                <div class="mt-4 p-3 bg-amber-50/60 border border-amber-200 rounded-xl text-xs text-stone-700">
+                    <strong>Analysis:</strong> Symmetric and non-linear geometric trend between private scalar and public coordinates.
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-amber-200 p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
+            <h4 class="text-xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
+                <i></i> Theoretical Analysis: One-Way Functions (OWF) vs. Cryptographic Hash Functions (CHF)
+            </h4>
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                Clear cryptographic distinction between general mathematical one-way requirements and specific hash function security properties.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
+                    <h5 class="text-sm font-bold text-amber-800 flex items-center gap-2">
+                        <i></i> One-Way Function (OWF) Properties
+                    </h5>
+                    <ul class="text-xs text-stone-700 space-y-2 list-disc list-inside leading-relaxed">
+                        <li><strong>Pre-image Resistance (One-Wayness):</strong> Given an output \(y\), it is computationally infeasible to find any input \(x\) such that \(f(x) = y\). This is the fundamental, defining property of any OWF.</li>
+                        <li><strong>Second Pre-image Resistance:</strong> Given an input \(x_1\), it is computationally hard to find a distinct second input \(x_2\) such that \(f(x_1) = f(x_2)\). Often required to ensure structural security.</li>
+                    </ul>
+                </div>
+                <div class="p-5 bg-orange-50/50 border border-orange-200 rounded-2xl space-y-3">
+                    <h5 class="text-sm font-bold text-terracotta-700 flex items-center gap-2">
+                        <i></i> Cryptographic Hash Function (CHF) Properties
+                    </h5>
+                    <ul class="text-xs text-stone-700 space-y-2 list-disc list-inside leading-relaxed">
+                        <li><strong>Collision Resistance:</strong> Infeasible to find *any* pair of distinct inputs \((x_1, x_2)\) yielding \(H(x_1) = H(x_2)\). Distinct from general OWFs where collisions might be mathematically trivial to locate.</li>
+                        <li><strong>Arbitrary Input Length:</strong> Must accept input messages of arbitrary size (from bytes to gigabytes) while producing a fixed-size digest output.</li>
+                        <li><strong>Avalanche Effect:</strong> Altering a single input bit stochastically flips ~50% of output bits unpredictably, ensuring complete diffusion and confusion.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white border border-amber-200 rounded-3xl overflow-hidden shadow-sm">
+            <div class="px-6 py-4 bg-amber-50/80 border-b border-amber-200">
+                <h3 class="text-base font-bold text-stone-900">Official Subgroup Table \(\langle G \rangle\)</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm text-stone-700">
+                    <thead>
+                        <tr class="border-b border-amber-200 bg-amber-50/40 text-amber-900">
+                            <th class="py-3 px-6 text-center">Subgroup Point</th>
+                            <th class="py-3 px-6 text-center">Scalar \(k\)</th>
+                            <th class="py-3 px-6 text-center">Coordinate \(x\)</th>
+                            <th class="py-3 px-6 text-center">Coordinate \(y\)</th>
+                            <th class="py-3 px-6 text-center">Exact Derivation Operation</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-amber-100">
+                        <tr class="hover:bg-amber-50/30 transition-colors"><td class="py-3 px-6 text-center font-bold text-amber-700">\(1G\)</td><td class="py-3 px-6 text-center">1</td><td class="py-3 px-6 text-center">1</td><td class="py-3 px-6 text-center">5</td><td class="py-3 px-6 text-center text-stone-500">Base Point \(G\)</td></tr>
+                        <tr class="hover:bg-amber-50/30 transition-colors"><td class="py-3 px-6 text-center font-bold text-amber-700">\(2G\)</td><td class="py-3 px-6 text-center">2</td><td class="py-3 px-6 text-center">2</td><td class="py-3 px-6 text-center">10</td><td class="py-3 px-6 text-center text-stone-500">Doubling: \(2(1,5)\)</td></tr>
+                        <tr class="hover:bg-amber-50/30 transition-colors"><td class="py-3 px-6 text-center font-bold text-amber-700">\(3G\)</td><td class="py-3 px-6 text-center">3</td><td class="py-3 px-6 text-center">5</td><td class="py-3 px-6 text-center">9</td><td class="py-3 px-6 text-center text-stone-500">Addition: \(2G + G\)</td></tr>
+                        <tr class="hover:bg-amber-50/30 transition-colors"><td class="py-3 px-6 text-center font-bold text-amber-700">\(4G\)</td><td class="py-3 px-6 text-center">4</td><td class="py-3 px-6 text-center">12</td><td class="py-3 px-6 text-center">1</td><td class="py-3 px-6 text-center text-stone-500">Addition: \(3G + G\)</td></tr>
+                        <tr class="hover:bg-amber-50/30 transition-colors"><td class="py-3 px-6 text-center font-bold text-amber-700">\(5G\)</td><td class="py-3 px-6 text-center">5</td><td class="py-3 px-6 text-center">12</td><td class="py-3 px-6 text-center">16</td><td class="py-3 px-6 text-center text-stone-500">Addition: \(4G + G\)</td></tr>
+                        <tr class="hover:bg-amber-50/30 transition-colors"><td class="py-3 px-6 text-center font-bold text-amber-700">\(6G\)</td><td class="py-3 px-6 text-center">6</td><td class="py-3 px-6 text-center">5</td><td class="py-3 px-6 text-center">8</td><td class="py-3 px-6 text-center text-stone-500">Addition: \(5G + G\)</td></tr>
+                        <tr class="hover:bg-amber-50/30 transition-colors"><td class="py-3 px-6 text-center font-bold text-amber-700">\(7G\)</td><td class="py-3 px-6 text-center">7</td><td class="py-3 px-6 text-center">2</td><td class="py-3 px-6 text-center">7</td><td class="py-3 px-6 text-center text-stone-500">Addition: \(6G + G\)</td></tr>
+                        <tr class="hover:bg-amber-50/30 transition-colors"><td class="py-3 px-6 text-center font-bold text-amber-700">\(8G\)</td><td class="py-3 px-6 text-center">8</td><td class="py-3 px-6 text-center">1</td><td class="py-3 px-6 text-center">12</td><td class="py-3 px-6 text-center text-stone-500">Addition: \(7G + G\)</td></tr>
+                        <tr class="hover:bg-amber-50/30 transition-colors"><td class="py-3 px-6 text-center font-bold text-terracotta-700">\(9G = \mathcal{O}\)</td><td class="py-3 px-6 text-center">9</td><td class="py-3 px-6 text-center">\(\varnothing\)</td><td class="py-3 px-6 text-center">\(\varnothing\)</td><td class="py-3 px-6 text-center text-stone-500">Neutral Element (\(8G + G\))</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <script>
+    const p = 17;
+    const canvas = document.getElementById('curveCanvas');
+    const ctx = canvas.getContext('2d');
+    const pad = 15;
+    const size = canvas.width - (pad * 2);
+    const scale = size / p;
+
+    function getValidPoints() {
+        let pts = [];
+        for (let x = 0; x < p; x++) {
+            for (let y = 0; y < p; y++) {
+                if ((y * y) % p === (Math.pow(x, 3) + 7) % p) pts.push({ x, y });
+            }
+        }
+        return pts;
+    }
+    const allPoints = getValidPoints();
+
+    function draw(active = null) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#d7ccc8'; ctx.fillStyle = '#78716c'; ctx.font = '8px sans-serif';
+
+        for (let i = 0; i < p; i += 4) {
+            let xPos = pad + (i * scale), yPos = canvas.height - pad - (i * scale);
+            ctx.beginPath(); ctx.moveTo(xPos, pad); ctx.lineTo(xPos, canvas.height - pad); ctx.stroke();
+            ctx.fillText(i, xPos - 3, canvas.height - 4);
+            ctx.beginPath(); ctx.moveTo(pad, yPos); ctx.lineTo(canvas.width - pad, yPos); ctx.stroke();
+            ctx.fillText(i, 4, yPos + 3);
+        }
+
+        allPoints.forEach(pt => {
+            let dx = pad + (pt.x * scale), dy = canvas.height - pad - (pt.y * scale);
+            ctx.fillStyle = '#a8a29e'; ctx.beginPath(); ctx.arc(dx, dy, 2.5, 0, 2 * Math.PI); ctx.fill();
+        });
+
+        if (active && active.pt) {
+            let dx = pad + (active.pt.x * scale), dy = canvas.height - pad - (active.pt.y * scale);
+            ctx.fillStyle = '#c2410c'; ctx.beginPath(); ctx.arc(dx, dy, 5, 0, 2 * Math.PI); ctx.fill();
+            ctx.fillStyle = '#292524'; ctx.fillText(`${active.st}G`, dx + 6, dy - 4);
+        }
+    }
+
+    function mod(n, m) { return ((n % m) + m) % m; }
+    function modInverse(a, m) {
+        a = mod(a, m);
+        for (let x = 1; x < m; x++) if ((a * x) % m === 1) return x;
+        return null;
+    }
+
+    function pointAdd(P, Q) {
+        if (!P) return { pt: Q, op: "Base G", details: "Initialization with base point G(1,5)." };
+        if (!Q) return { pt: P, op: "Identity", details: "Neutral element." };
+        let x1 = P.x, y1 = P.y, x2 = Q.x, y2 = Q.y, m, details = "";
+        let opType = "Point Add";
+
+        if (x1 === x2 && mod(y1 + y2, p) === 0) {
+            return { pt: null, op: "Infinity", details: `P(${x1},${y1}) + (-P) = Point at Infinity (\\(\\mathcal{O}\\)) [Subgroup order n=9 reached]` };
+        }
+        
+        if (x1 === x2 && y1 === y2) {
+            let num = mod(3 * x1 * x1, p);
+            let den = modInverse(2 * y1, p);
+            if (den === null) return { pt: null, op: "Invalid", details: "Zero denominator in point doubling." };
+            m = mod(num * den, p);
+            opType = "Point Double";
+            details = "Doubling: m = (3*" + x1 + "^2 * inv(" + (2*y1) + ")) mod 17 = " + m;
+        } else {
+            let num = mod(y2 - y1, p);
+            let den = modInverse(x2 - x1, p);
+            if (den === null) return { pt: null, op: "Invalid", details: "Zero denominator in point addition." };
+            m = mod(num * den, p);
+            details = "Addition: m = ((" + y2 + "-" + y1 + ") * inv(" + x2 + "-" + x1 + ")) mod 17 = " + m;
+        }
+        
+        let x3 = mod(m * m - x1 - x2, p);
+        let y3 = mod(m * (x1 - x3) - y1, p);
+        details += "<br>x3 = (" + m + "^2 - " + x1 + " - " + x2 + ") mod 17 = <strong>" + x3 + "</strong>";
+        details += "<br>y3 = (" + m + "*(" + x1 + "-" + x3 + ") - " + y1 + ") mod 17 = <strong>" + y3 + "</strong>";
+
+        return { pt: { x: x3, y: y3 }, op: opType, details: details };
+    }
+
+    function runSimulation() {
+        const G = { x: 1, y: 5 };
+        let kMax = parseInt(document.getElementById('kInput').value) || 12;
+        let current = null;
+        let steps = [];
+        let tableHTML = "";
+
+        for (let i = 1; i <= kMax; i++) {
+            let res = pointAdd(current, G);
+            if (!res.pt) {
+                current = null;
+                tableHTML += "<tr><td class='p-3 text-center'>" + i + "G (Cycle " + (Math.floor((i-1)/9)+1) + ")</td><td class='p-3 text-center text-amber-700 font-bold'>Infinity (\\(\\mathcal{O}\\))</td><td class='p-3 text-center'>Neutral Element</td></tr>";
+                steps.push({ pt: null, st: i, op: "Infinity", details: "Point at infinity reached." });
+                continue;
+            }
+            current = res.pt;
+            steps.push({ pt: current, st: i, op: res.op, details: res.details });
+            tableHTML += "<tr><td class='p-3 text-center font-bold text-amber-800'>" + i + "G</td><td class='p-3 text-center'>" + res.op + "</td><td class='p-3 text-center font-mono'>(" + current.x + ", " + current.y + ")</td></tr>";
+        }
+
+        document.getElementById('tableBody').innerHTML = tableHTML;
+
+        let index = 0;
+        document.getElementById('statusText').innerText = "Calculating...";
+        
+        let timer = setInterval(() => {
+            if (index < steps.length) {
+                draw(steps[index]);
+                if (steps[index].pt) {
+                    document.getElementById('algebraDetails').innerHTML = "<strong>Step " + steps[index].st + "G (" + steps[index].op + "):</strong><br>" + steps[index].details;
+                } else {
+                    document.getElementById('algebraDetails').innerHTML = "<strong>Step " + steps[index].st + "G:</strong> Point at Infinity \\(\\mathcal{O}\\) reached (Order \\(n=9\\)), cycling restarts.";
+                }
+                document.getElementById('statusText').innerText = "Step " + steps[index].st + "G executed";
+                index++;
+            } else {
+                clearInterval(timer);
+                document.getElementById('statusText').innerText = "Completed!";
+            }
+        }, 400);
+    }
+
+    function drawCharts() {
+        const c1 = document.getElementById('chartXFreq');
+        const ctx1 = c1.getContext('2d');
+        ctx1.clearRect(0, 0, c1.width, c1.height);
+        ctx1.strokeStyle = '#d7ccc8'; ctx1.lineWidth = 1;
+        ctx1.beginPath(); ctx1.moveTo(50, 20); ctx1.lineTo(50, 150); ctx1.lineTo(490, 150); ctx1.stroke();
+
+        ctx1.fillStyle = '#78716c'; ctx1.font = '10px sans-serif';
+        for(let y=0; y<=2; y++) {
+            let py = 150 - y * 50;
+            ctx1.fillText(y, 30, py + 4);
+            ctx1.beginPath(); ctx1.moveTo(45, py); ctx1.lineTo(50, py); ctx1.stroke();
+        }
+
+        const xVals = [1, 2, 5, 12];
+        const xCounts = [2, 2, 2, 2];
+        xVals.forEach((val, idx) => {
+            let px = 85 + idx * 100;
+            let h = xCounts[idx] * 50;
+            ctx1.fillStyle = '#d97706';
+            ctx1.fillRect(px, 150 - h, 50, h);
+            ctx1.fillStyle = '#44403c'; ctx1.font = 'bold 11px sans-serif';
+            ctx1.fillText("Count: " + xCounts[idx], px + 6, 140 - h);
+            ctx1.fillStyle = '#78716c'; ctx1.font = '11px sans-serif';
+            ctx1.fillText("x = " + val, px + 8, 168);
+        });
+        ctx1.fillText("Freq (N)", 10, 15);
+        ctx1.fillText("Subgroup x Values", 410, 185);
+
+        const cY = document.getElementById('chartYFreq');
+        const ctxY = cY.getContext('2d');
+        ctxY.clearRect(0, 0, cY.width, cY.height);
+        ctxY.strokeStyle = '#d7ccc8'; ctxY.lineWidth = 1;
+        ctxY.beginPath(); ctxY.moveTo(40, 20); ctxY.lineTo(40, 150); ctxY.lineTo(500, 150); ctxY.stroke();
+
+        ctxY.fillStyle = '#78716c'; ctxY.font = '9px sans-serif';
+        for(let y=0; y<=1; y++) {
+            let py = 150 - y * 100;
+            ctxY.fillText(y, 22, py + 3);
+            ctxY.beginPath(); ctxY.moveTo(35, py); ctxY.lineTo(40, py); ctxY.stroke();
+        }
+
+        const yVals = [5, 10, 9, 1, 16, 8, 7, 12];
+        yVals.forEach((val, idx) => {
+            let px = 55 + idx * 53;
+            let h = 100; 
+            ctxY.fillStyle = '#c2410c';
+            ctxY.fillRect(px, 150 - h, 38, h);
+            ctxY.fillStyle = '#44403c'; ctxY.font = 'bold 10px sans-serif';
+            ctxY.fillText("y=" + val, px + 4, 168);
+        });
+        ctxY.fillText("Freq", 10, 15);
+        ctxY.fillText("Subgroup y Values", 410, 185);
+
+        const c2 = document.getElementById('chartBitDist');
+        const ctx2 = c2.getContext('2d');
+        ctx2.clearRect(0, 0, c2.width, c2.height);
+        ctx2.strokeStyle = '#d7ccc8'; ctx2.lineWidth = 1;
+        ctx2.beginPath(); ctx2.moveTo(50, 20); ctx2.lineTo(50, 150); ctx2.lineTo(490, 150); ctx2.stroke();
+
+        ctx2.fillStyle = '#78716c'; ctx2.font = '10px sans-serif';
+        for(let y=0; y<=8; y+=2) {
+            let py = 150 - (y / 8) * 120;
+            ctx2.fillText(y, 28, py + 4);
+            ctx2.beginPath(); ctx2.moveTo(45, py); ctx2.lineTo(50, py); ctx2.stroke();
+        }
+
+        const bitCounts = [8, 4, 7, 6, 1];
+        bitCounts.forEach((cnt, i) => {
+            let px = 70 + i * 82;
+            let h = (cnt / 8) * 120;
+            ctx2.fillStyle = '#c2410c';
+            ctx2.fillRect(px, 150 - h, 45, h);
+            ctx2.fillStyle = '#44403c'; ctx2.font = 'bold 11px sans-serif';
+            ctx2.fillText(cnt, px + 17, 140 - h);
+            ctx2.fillStyle = '#78716c'; ctx2.font = '11px sans-serif';
+            ctx2.fillText("b" + i, px + 15, 168);
+        });
+        ctx2.fillText("Ones", 10, 15);
+        ctx2.fillText("Bit Position", 440, 185);
+
+        const c3 = document.getElementById('chartCorrelation');
+        const ctx3 = c3.getContext('2d');
+        ctx3.clearRect(0, 0, c3.width, c3.height);
+        ctx3.strokeStyle = '#d7ccc8'; ctx3.lineWidth = 1;
+        ctx3.beginPath(); ctx3.moveTo(50, 20); ctx3.lineTo(50, 160); ctx3.lineTo(490, 160); ctx3.stroke();
+
+        ctx3.fillStyle = '#78716c'; ctx3.font = '10px sans-serif';
+        for(let y=0; y<=16; y+=4) {
+            let py = 160 - (y / 16) * 130;
+            ctx3.fillText(y, 25, py + 4);
+            ctx3.beginPath(); ctx3.moveTo(45, py); ctx3.lineTo(50, py); ctx3.stroke();
+        }
+
+        for(let k=1; k<=8; k++) {
+            let px = 60 + (k - 1) * 53;
+            ctx3.fillText("k=" + k, px - 6, 175);
+            ctx3.beginPath(); ctx3.moveTo(px, 160); ctx3.lineTo(px, 165); ctx3.stroke();
+        }
+
+        const kPoints = [{k:1, x:1}, {k:2, x:2}, {k:3, x:5}, {k:4, x:12}, {k:5, x:12}, {k:6, x:5}, {k:7, x:2}, {k:8, x:1}];
+        ctx3.strokeStyle = '#d97706'; ctx3.lineWidth = 2; ctx3.beginPath();
+        kPoints.forEach((pt, idx) => {
+            let px = 60 + (pt.k - 1) * 53;
+            let py = 160 - (pt.x / 16) * 130;
+            if(idx === 0) ctx3.moveTo(px, py); else ctx3.lineTo(px, py);
+            ctx3.fillStyle = '#c2410c';
+            ctx3.beginPath(); ctx3.arc(px, py, 4, 0, 2*Math.PI); ctx3.fill();
+        });
+        ctx3.stroke();
+        ctx3.fillText("x Coord", 10, 15);
+        ctx3.fillText("Scalar k", 450, 185);
+    }
+    draw();
+    drawCharts();
+    </script>
+</body>
+</html>
