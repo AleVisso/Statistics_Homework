@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 2 — Ethereum Crypto Pipeline & Wallets</title>
+    <title>Homework 2 — Ethereum Pipeline</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,9 +28,6 @@
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
             background-color: #fcf8f2;
@@ -56,207 +53,542 @@
                     </h1>
                 </div>
             </div>
+
+            <nav class="flex flex-wrap justify-center gap-1.5 bg-amber-100/70 p-1.5 rounded-2xl border border-amber-200">
+                <button onclick="switchTab('section1')" id="btn-section1" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md flex items-center gap-2">
+                    Pipeline & Concepts
+                </button>
+                <button onclick="switchTab('section2')" id="btn-section2" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50 flex items-center gap-2">
+                    Usage Matrix
+                </button>
+                <button onclick="switchTab('section3')" id="btn-section3" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50 flex items-center gap-2">
+                    Timeline
+                </button>
+                <button onclick="switchTab('section4')" id="btn-section4" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50 flex items-center gap-2">
+                    Multi-Technique Architecture
+                </button>
+            </nav>
         </div>
     </header>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
-        
-        <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm">
-            <h3 class="text-lg font-bold text-amber-800 mb-4 flex items-center gap-2">
-                <i></i>1 — Pipeline Components & Conceptual Distinctions
-            </h3>
-            <p class="text-stone-600 text-sm sm:text-base leading-relaxed mb-6">
-                Secure management and interaction with Ethereum require coordinated standards and cryptographic primitives. From mnemonic generation to checksum-protected addresses, each step fulfills a rigorous task.
-            </p>
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-amber-50/40 border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
-                    <div>
-                        <h4 class="text-base font-bold text-amber-900 mb-2">BIP-39</h4>
-                        <p class="text-stone-700 text-xs sm:text-sm leading-relaxed mb-4">
-                            Converts random entropy into an easy-to-annotate mnemonic word sequence, transformed by PBKDF2 into a master binary seed.
+        <section id="section1" class="tab-content space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm">
+                <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200 inline-block mb-3">
+                1 — Pipeline Components & Conceptual Distinctions
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight mb-2">
+                    Role, Purpose of Standards, Primitives & Core Concepts
+                </h2>
+                <p class="text-stone-600 text-sm sm:text-base leading-relaxed">
+                    Secure management and interaction with Ethereum require coordinated standards and cryptographic primitives. From mnemonic generation to checksum-protected addresses, each step fulfills a rigorous task.
+                </p>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold text-amber-900 mb-4">
+                    Standards & Cryptographic Primitives
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <div class="bg-white border border-amber-200 hover:border-amber-400 rounded-2xl p-6 transition-all duration-300 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">Mnemonic</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-stone-900 mb-2">BIP-39</h4>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-4">
+                                Converts random entropy into an easy-to-annotate mnemonic word sequence, transformed by PBKDF2 into a master binary seed.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-amber-100 flex items-center justify-between text-xs text-stone-500">
+                            <span>Role: <strong class="text-amber-700">Human Backup</strong></span>
+                            <button onclick="openModal('BIP-39', 'Bitcoin Improvement Proposal 39 defines how to convert 128-256 bits of entropy into 12-24 words from a 2048-word list. PBKDF2 (using HMAC-SHA512) derives the 512-bit master seed from this phrase.')" class="text-amber-700 hover:underline font-medium">
+                                Details &rarr;
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-amber-200 hover:border-amber-400 rounded-2xl p-6 transition-all duration-300 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">HD Wallets</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-stone-900 mb-2">BIP-32</h4>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-4">
+                                Introduces Hierarchical Deterministic (HD) wallets, allowing you to derive an entire hierarchical tree of private and public keys from a single root seed.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-amber-100 flex items-center justify-between text-xs text-stone-500">
+                            <span>Role: <strong class="text-amber-700">Key Hierarchy</strong></span>
+                            <button onclick="openModal('BIP-32', 'BIP-32 enables deterministic child key derivation without requiring new randomness. Possession of the root seed allows complete reconstruction of the entire sub-key tree.')" class="text-amber-700 hover:underline font-medium">
+                                Details &rarr;
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-amber-200 hover:border-amber-400 rounded-2xl p-6 transition-all duration-300 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">Path Standard</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-stone-900 mb-2">BIP-44</h4>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-4">
+                                Standardizes hierarchical derivation paths, ensuring different wallets recognize identical accounts and addresses.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-amber-100 flex items-center justify-between text-xs text-stone-500">
+                            <span>Path: <code class="text-terracotta-700 bg-amber-50 px-1.5 py-0.5 rounded">m/44'/60'/0'/0/0</code></span>
+                            <button onclick="openModal('BIP-44', 'BIP-44 defines a 5-level derivation path structure: m / purpose\' / coin_type\' / account\' / change / address_index. For Ethereum, coin_type is 60\'.')" class="text-amber-700 hover:underline font-medium">
+                                Details &rarr;
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-amber-200 hover:border-amber-400 rounded-2xl p-6 transition-all duration-300 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">Elliptic Curve</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-stone-900 mb-2">SECP256K1</h4>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-4">
+                                Standard elliptic curve chosen for Ethereum; defines secure mathematics for tying private keys to public keys and signing transactions digitally.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-amber-100 flex items-center justify-between text-xs text-stone-500">
+                            <span>Role: <strong class="text-amber-700">Digital Signatures</strong></span>
+                            <button onclick="openModal('SECP256K1', 'Secp256k1 is a Koblitz curve defined by y^2 = x^3 + 7 over F_p, favored for high computational efficiency.')" class="text-amber-700 hover:underline font-medium">
+                                Details &rarr;
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-amber-200 hover:border-amber-400 rounded-2xl p-6 transition-all duration-300 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">Hash Function</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-stone-900 mb-2">Keccak-256</h4>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-4">
+                                Cryptographic hash function reducing the public key to a 32-byte string, from which the final 20 bytes form the Ethereum address.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-amber-100 flex items-center justify-between text-xs text-stone-500">
+                            <span>Reduction: <strong class="text-amber-700">64B -> 20B Address</strong></span>
+                            <button onclick="openModal('Keccak-256', 'Keccak-256 hashes the uncompressed public key. The last 20 bytes of this hash represent the base Ethereum address.')" class="text-amber-700 hover:underline font-medium">
+                                Details &rarr;
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-amber-200 hover:border-amber-400 rounded-2xl p-6 transition-all duration-300 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">Checksum</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-stone-900 mb-2">EIP-55</h4>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-4">
+                                Mixed uppercase and lowercase encoding mechanism based on a hexadecimal checksum derived from Keccak-256 to prevent human typos.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-amber-100 flex items-center justify-between text-xs text-stone-500">
+                            <span>Prevention: <strong class="text-amber-700">Typo Checksum</strong></span>
+                            <button onclick="openModal('EIP-55', 'EIP-55 capitalizes specific characters based on the Keccak-256 hash of the address string, giving typos a 50% chance of detection.')" class="text-amber-700 hover:underline font-medium">
+                                Details &rarr;
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="pt-6">
+                <h3 class="text-xl font-bold text-amber-900 mb-4">
+                    Key Conceptual Distinctions
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <h4 class="text-base font-bold text-stone-900 mb-2">
+                            Key Generation vs Derivation
+                        </h4>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            <strong class="text-amber-700">Generation</strong> creates original entropy and random root keys. <strong class="text-amber-700">Derivation</strong> deterministically computes child sub-keys from the root without new randomness.
                         </p>
                     </div>
-                    <span class="text-xs font-mono text-amber-800 font-semibold">Role: Human Backup</span>
-                </div>
 
-                <div class="bg-amber-50/40 border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
-                    <div>
-                        <h4 class="text-base font-bold text-amber-900 mb-2">BIP-32</h4>
-                        <p class="text-stone-700 text-xs sm:text-sm leading-relaxed mb-4">
-                            Introduces Hierarchical Deterministic (HD) wallets, allowing you to derive an entire hierarchical tree of private and public keys from a single root seed.
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <h4 class="text-base font-bold text-stone-900 mb-2">
+                            Public Key Cryptography
+                        </h4>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Manages asymmetric duality to authenticate and sign transactions, ensuring only the private key holder can authorize transfers.
                         </p>
                     </div>
-                    <span class="text-xs font-mono text-amber-800 font-semibold">Role: Key Hierarchy</span>
-                </div>
 
-                <div class="bg-amber-50/40 border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
-                    <div>
-                        <h4 class="text-base font-bold text-amber-900 mb-2">BIP-44</h4>
-                        <p class="text-stone-700 text-xs sm:text-sm leading-relaxed mb-4">
-                            Standardizes hierarchical derivation paths (e.g., for Ethereum), ensuring different wallets recognize identical accounts and addresses.
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <h4 class="text-base font-bold text-stone-900 mb-2">
+                            Hashing & Checksums
+                        </h4>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            <strong class="text-amber-700">Hashing</strong> transforms arbitrary data into fixed-length fingerprints. <strong class="text-amber-700">Checksums</strong> add audit metadata to verify integrity and prevent typos.
                         </p>
                     </div>
-                    <span class="text-xs font-mono text-amber-800 font-semibold">Path: m/44'/60'/0'/0/0</span>
                 </div>
+            </div>
 
-                <div class="bg-amber-50/40 border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
-                    <div>
-                        <h4 class="text-base font-bold text-amber-900 mb-2">SECP256K1</h4>
-                        <p class="text-stone-700 text-xs sm:text-sm leading-relaxed mb-4">
-                            Standard elliptic curve chosen for Ethereum and Bitcoin; defines secure mathematics for tying private keys to public keys and signing transactions digitally.
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-4">Difference Between SHA-2/SHA-512 and Keccak/SHA-3</h3>
+                <div class="text-stone-600 text-sm sm:text-base space-y-3 leading-relaxed">
+                    <p>
+                        While sharing the same conceptual family of hash functions, <strong>SHA-3</strong> is the version standardized by NIST in 2015 that modified certain padding parameters from Keccak's original proposal.
+                    </p>
+                    <p>
+                        <strong>Ethereum specifically uses Keccak-256</strong>, chosen during the original design phase before NIST formally finalized the SHA-3 standard, making them slightly incompatible in results with identical inputs.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section2" class="tab-content hidden space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+                <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200 inline-block mb-3">
+                    2 — Usage & Components Matrix
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight mb-2">
+                    Usage and Components Comparison Table
+                </h2>
+                <p class="text-stone-600 text-sm sm:text-base leading-relaxed">
+                    Detailed mapping showing the primary operational usage/purpose in the first column, followed by the specific cryptographic standards and components that fulfill it.
+                </p>
+            </div>
+
+            <div class="bg-white border border-amber-200 rounded-3xl overflow-hidden shadow-sm">
+                <div class="px-6 py-4 bg-amber-50/80 border-b border-amber-200 flex justify-between items-center">
+                    <h3 class="text-base font-bold text-stone-900">
+                        Pipeline Usage vs Components Matrix
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-amber-200 bg-amber-50/40 text-xs uppercase tracking-wider text-amber-900">
+                                <th class="py-4 px-6 font-semibold">Usage / Purpose</th>
+                                <th class="py-4 px-6 font-semibold">Components / Standards Involved</th>
+                                <th class="py-4 px-6 font-semibold">Architectural Layer</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-amber-100 text-sm text-stone-700">
+                            <tr class="hover:bg-amber-50/30 transition-colors">
+                                <td class="py-4 px-6 font-medium text-stone-900">Logical & Organizational Structure / Human Backup</td>
+                                <td class="py-4 px-6">
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold">BIP-39</span>
+                                        <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold">BIP-32</span>
+                                        <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold">BIP-44</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-stone-500">Deterministic HD Wallet Tree & Mnemonic</td>
+                            </tr>
+                            <tr class="hover:bg-amber-50/30 transition-colors">
+                                <td class="py-4 px-6 font-medium text-stone-900">Cryptographic Security & Digital Signatures</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold">SECP256K1</span>
+                                </td>
+                                <td class="py-4 px-6 text-stone-500">Elliptic Curve Cryptography</td>
+                            </tr>
+                            <tr class="hover:bg-amber-50/30 transition-colors">
+                                <td class="py-4 px-6 font-medium text-stone-900">One-way Compression & Address Reduction</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold">Keccak-256</span>
+                                </td>
+                                <td class="py-4 px-6 text-stone-500">Cryptographic Hash Function</td>
+                            </tr>
+                            <tr class="hover:bg-amber-50/30 transition-colors">
+                                <td class="py-4 px-6 font-medium text-stone-900">Human Error Prevention / Typo Protection</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold">EIP-55</span>
+                                </td>
+                                <td class="py-4 px-6 text-stone-500">Mixed-Letter Checksum Encoding</td>
+                            </tr>
+                            <tr class="hover:bg-amber-50/30 transition-colors">
+                                <td class="py-4 px-6 font-medium text-stone-900">Asymmetric Duality & Authentication</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold">Public Key Cryptography</span>
+                                </td>
+                                <td class="py-4 px-6 text-stone-500">Private/Public Key Pairs</td>
+                            </tr>
+                            <tr class="hover:bg-amber-50/30 transition-colors">
+                                <td class="py-4 px-6 font-medium text-stone-900">Integrity & Tamper Proofing</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold">Hashing & Checksums</span>
+                                </td>
+                                <td class="py-4 px-6 text-stone-500">Data Integrity Primitives</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="section3" class="tab-content hidden space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+                <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200 inline-block mb-3">
+                    3 — Chronological Evolution Timeline
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight mb-2">
+                    Historical & Chronological Context (1977 – 2016)
+                </h2>
+                <p class="text-stone-600 text-sm sm:text-base leading-relaxed">
+                    Visual representation of cryptographic technologies and blockchain standards connected via a timeline with chronological points and connecting lines.
+                </p>
+            </div>
+
+            <div class="relative pl-6 sm:pl-10 space-y-8 my-8 before:content-[''] before:absolute before:left-[11px] sm:before:left-[19px] before:top-3 before:bottom-3 before:w-0.5 before:bg-amber-300">
+                
+                <div class="relative group">
+                    <div class="absolute -left-[27px] sm:-left-[35px] top-1.5 w-6 h-6 rounded-full bg-white border-2 border-amber-600 flex items-center justify-center shadow-sm">
+                        <div class="w-2 h-2 rounded-full bg-amber-600"></div>
+                    </div>
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">1977</span>
+                            <span class="text-xs text-stone-500 font-mono">Foundation</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-1">RSA (Asymmetric Encryption)</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            First widely used asymmetric encryption system, establishing the cornerstone of public-key cryptography.
                         </p>
                     </div>
-                    <span class="text-xs font-mono text-amber-800 font-semibold">Role: Digital Signatures</span>
                 </div>
 
-                <div class="bg-amber-50/40 border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
-                    <div>
-                        <h4 class="text-base font-bold text-amber-900 mb-2">Keccak-256</h4>
-                        <p class="text-stone-700 text-xs sm:text-sm leading-relaxed mb-4">
-                            Cryptographic hash function reducing the public key (64 bytes) to a 32-byte string, from which the final 20 bytes form the Ethereum address.
+                <div class="relative group">
+                    <div class="absolute -left-[27px] sm:-left-[35px] top-1.5 w-6 h-6 rounded-full bg-white border-2 border-amber-600 flex items-center justify-center shadow-sm">
+                        <div class="w-2 h-2 rounded-full bg-amber-600"></div>
+                    </div>
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">2001</span>
+                            <span class="text-xs text-stone-500 font-mono">NIST Standard</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-1">SHA-2 / SHA-512</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            NIST Hashing Standard adopted globally across secure communications and digital infrastructure.
                         </p>
                     </div>
-                    <span class="text-xs font-mono text-amber-800 font-semibold">Reduction: 64B -> 20B</span>
                 </div>
 
-                <div class="bg-amber-50/40 border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
-                    <div>
-                        <h4 class="text-base font-bold text-amber-900 mb-2">EIP-55</h4>
-                        <p class="text-stone-700 text-xs sm:text-sm leading-relaxed mb-4">
-                            Mixed uppercase and lowercase encoding mechanism based on a hexadecimal checksum derived from Keccak-256 to prevent human typos when sending funds.
+                <div class="relative group">
+                    <div class="absolute -left-[27px] sm:-left-[35px] top-1.5 w-6 h-6 rounded-full bg-white border-2 border-amber-600 flex items-center justify-center shadow-sm">
+                        <div class="w-2 h-2 rounded-full bg-amber-600"></div>
+                    </div>
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">2012</span>
+                            <span class="text-xs text-stone-500 font-mono">BIP Standard</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-1">BIP-32 (Deterministic HD Wallets)</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Birth of Deterministic HD Wallets, allowing entire trees of keys to be generated from a single root seed.
                         </p>
                     </div>
-                    <span class="text-xs font-mono text-amber-800 font-semibold">Prevention: Typo Checksum</span>
                 </div>
-            </div>
-        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white border border-amber-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
-                <span class="text-xs font-semibold text-stone-500 uppercase">Derivation Standard</span>
-                <span class="text-sm font-bold text-amber-700 font-mono">BIP-44</span>
-            </div>
-            <div class="bg-white border border-amber-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
-                <span class="text-xs font-semibold text-stone-500 uppercase">Curve Architecture</span>
-                <span class="text-sm font-bold text-terracotta-700 font-mono">SECP256K1</span>
-            </div>
-            <div class="bg-white border border-amber-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
-                <span class="text-xs font-semibold text-stone-500 uppercase">Hash Primitive</span>
-                <span class="text-sm font-bold text-orange-700 font-mono">Keccak-256</span>
-            </div>
-            <div class="bg-white border border-amber-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
-                <span class="text-xs font-semibold text-stone-500 uppercase">Checksum Encoding</span>
-                <span class="text-sm font-bold text-amber-800 font-mono">EIP-55</span>
-            </div>
-        </div>
+                <div class="relative group">
+                    <div class="absolute -left-[27px] sm:-left-[35px] top-1.5 w-6 h-6 rounded-full bg-white border-2 border-amber-600 flex items-center justify-center shadow-sm">
+                        <div class="w-2 h-2 rounded-full bg-amber-600"></div>
+                    </div>
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">2013</span>
+                            <span class="text-xs text-stone-500 font-mono">UX Innovation</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-1">BIP-39 (Mnemonic Phrases)</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Introduction of human-readable mnemonic phrases to securely generate deterministic wallet seeds.
+                        </p>
+                    </div>
+                </div>
 
-        <div class="bg-white border border-amber-200 rounded-3xl overflow-hidden shadow-sm">
-            <div class="px-6 py-4 bg-amber-50/80 border-b border-amber-200">
-                <h3>2 — Usage and Components Matrix</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-xs sm:text-sm text-stone-700">
-                    <thead>
-                        <tr class="border-b border-amber-200 bg-amber-50/40 text-amber-900">
-                            <th class="py-3 px-6 font-semibold">Usage / Purpose</th>
-                            <th class="py-3 px-6 font-semibold">Components / Standards Involved</th>
-                            <th class="py-3 px-6 font-semibold">Architectural Layer</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-amber-100">
-                        <tr class="hover:bg-amber-50/30 transition-colors">
-                            <td class="py-3 px-6 font-medium text-stone-900">Logical & Organizational Structure / Human Backup</td>
-                            <td class="py-3 px-6">BIP-39, BIP-32, BIP-44</td>
-                            <td class="py-3 px-6 text-stone-500">Deterministic HD Wallet Tree & Mnemonic</td>
-                        </tr>
-                        <tr class="hover:bg-amber-50/30 transition-colors">
-                            <td class="py-3 px-6 font-medium text-stone-900">Cryptographic Security & Digital Signatures</td>
-                            <td class="py-3 px-6">SECP256K1</td>
-                            <td class="py-3 px-6 text-stone-500">Elliptic Curve Cryptography</td>
-                        </tr>
-                        <tr class="hover:bg-amber-50/30 transition-colors">
-                            <td class="py-3 px-6 font-medium text-stone-900">One-way Compression & Address Reduction</td>
-                            <td class="py-3 px-6">Keccak-256</td>
-                            <td class="py-3 px-6 text-stone-500">Cryptographic Hash Function</td>
-                        </tr>
-                        <tr class="hover:bg-amber-50/30 transition-colors">
-                            <td class="py-3 px-6 font-medium text-stone-900">Human Error Prevention / Typo Protection</td>
-                            <td class="py-3 px-6">EIP-55</td>
-                            <td class="py-3 px-6 text-stone-500">Mixed-Letter Checksum Encoding</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                <div class="relative group">
+                    <div class="absolute -left-[27px] sm:-left-[35px] top-1.5 w-6 h-6 rounded-full bg-white border-2 border-amber-600 flex items-center justify-center shadow-sm">
+                        <div class="w-2 h-2 rounded-full bg-amber-600"></div>
+                    </div>
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">2014</span>
+                            <span class="text-xs text-stone-500 font-mono">Multi-Account</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-1">BIP-44 (Multi-Account Derivation Paths)</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Standardization of multi-account hierarchical derivation paths ensuring cross-wallet compatibility.
+                        </p>
+                    </div>
+                </div>
 
-        <div class="bg-white border border-amber-200 p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
-            <h4 class="text-xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
-                <i></i>3 — Chronological Evolution Timeline (1977 – 2016)
-            </h4>
-            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                Historical progression of cryptographic standards leading up to modern Ethereum wallet architecture.
-            </p>
+                <div class="relative group">
+                    <div class="absolute -left-[27px] sm:-left-[35px] top-1.5 w-6 h-6 rounded-full bg-white border-2 border-amber-600 flex items-center justify-center shadow-sm">
+                        <div class="w-2 h-2 rounded-full bg-amber-600"></div>
+                    </div>
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">2015</span>
+                            <span class="text-xs text-stone-500 font-mono">NIST FIPS 202</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-1">SHA-3 (Keccak Family Standardization)</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            NIST Final Standardization based on the Keccak family, with slight padding differences from original Keccak.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -left-[27px] sm:-left-[35px] top-1.5 w-6 h-6 rounded-full bg-white border-2 border-amber-600 flex items-center justify-center shadow-sm">
+                        <div class="w-2 h-2 rounded-full bg-amber-600"></div>
+                    </div>
+                    <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">2016</span>
+                            <span class="text-xs text-stone-500 font-mono">Ethereum Standard</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-1">EIP-55 (Ethereum Mixed-Letter Checksum)</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Adoption of Ethereum addresses with mixed-letter checksums to prevent user typos.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="section4" class="tab-content hidden space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+                <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200 inline-block mb-3">
+                    4 — Architectural Rationale
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight mb-2">
+                    Why Use Multiple Different Techniques Instead of a Single Algorithm?
+                </h2>
+                <p class="text-stone-600 text-sm sm:text-base leading-relaxed">
+                    A wallet pipeline doesn't rely on a single algorithm because each step fulfills a completely different security and engineering task.
+                </p>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <span class="text-xs font-bold text-amber-800 font-mono">1977 — RSA</span>
-                    <h5 class="text-sm font-bold text-stone-900">Asymmetric Encryption Foundation</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">First widely used asymmetric encryption system, establishing the cornerstone of public-key cryptography.</p>
+                <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm flex gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-2">BIP-39 / BIP-32 / BIP-44</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            They serve the <strong class="text-amber-700">logical and organizational structure</strong> (management and human backup of thousands of keys).
+                        </p>
+                    </div>
                 </div>
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <span class="text-xs font-bold text-amber-800 font-mono">2001 — SHA-2 / SHA-512</span>
-                    <h5 class="text-sm font-bold text-stone-900">NIST Hashing Standard</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">Adopted globally across secure communications and digital infrastructure.</p>
-                </div>
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <span class="text-xs font-bold text-amber-800 font-mono">2012 — BIP-32</span>
-                    <h5 class="text-sm font-bold text-stone-900">Deterministic HD Wallets</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">Birth of hierarchical deterministic wallets allowing key trees from a single root seed.</p>
-                </div>
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <span class="text-xs font-bold text-amber-800 font-mono">2013 — BIP-39</span>
-                    <h5 class="text-sm font-bold text-stone-900">Mnemonic Phrases</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">Introduction of human-readable mnemonic phrases to securely generate deterministic seeds.</p>
-                </div>
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <span class="text-xs font-bold text-amber-800 font-mono">2014 — BIP-44</span>
-                    <h5 class="text-sm font-bold text-stone-900">Multi-Account Paths</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">Standardization of multi-account hierarchical derivation paths.</p>
-                </div>
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <span class="text-xs font-bold text-amber-800 font-mono">2016 — EIP-55</span>
-                    <h5 class="text-sm font-bold text-stone-900">Ethereum Checksum</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">Adoption of mixed-letter checksum addresses to prevent user typos.</p>
-                </div>
-            </div>
-        </div>
 
-        <div class="bg-white border border-amber-200 p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
-            <h4 class="text-xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
-                <i></i>4 — Multi-Technique Architecture Rationale
-            </h4>
-            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                Why use multiple different techniques instead of a single algorithm? Each layer solves a distinct operational challenge.
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <h5 class="text-sm font-bold text-amber-800">BIP Standards (39/32/44)</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">Serve the logical and organizational structure (management and human backup of thousands of keys).</p>
+                <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm flex gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-2">SECP256K1</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Ensures <strong class="text-amber-700">cryptographic security and digital signatures</strong> (proving ownership of funds via elliptic curve mathematics).
+                        </p>
+                    </div>
                 </div>
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <h5 class="text-sm font-bold text-amber-800">SECP256K1 Curve</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">Ensures cryptographic security and digital signatures (proving ownership via elliptic curve math).</p>
+
+                <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm flex gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-2">Keccak-256</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Fulfills <strong class="text-amber-700">one-way compression and reduction</strong> (transforming bulky public keys into compact addresses).
+                        </p>
+                    </div>
                 </div>
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <h5 class="text-sm font-bold text-amber-800">Keccak-256</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">Fulfills one-way compression and reduction (transforming bulky public keys into compact addresses).</p>
-                </div>
-                <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                    <h5 class="text-sm font-bold text-amber-800">EIP-55</h5>
-                    <p class="text-xs text-stone-700 leading-relaxed">Ensures the prevention of human errors (protecting the user from interface typos).</p>
+
+                <div class="bg-white border border-amber-200 rounded-2xl p-6 shadow-sm flex gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-2">EIP-55</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Ensures the <strong class="text-amber-700">prevention of human errors</strong> (protecting the user from typos in the graphical interface).
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div class="bg-amber-100/60 border border-amber-200 rounded-3xl p-6 sm:p-8 text-center shadow-sm mt-8">
+                <h3 class="text-xl font-bold text-amber-900 mb-3">Architectural Conclusion</h3>
+                <p class="text-stone-700 text-sm sm:text-base max-w-3xl mx-auto leading-relaxed">
+                    The synergistic combination of these specialized tools ensures <strong class="text-amber-800">modularity</strong>, <strong class="text-amber-800">maximum cryptographic security</strong>, and <strong class="text-amber-800">high practical usability</strong>.
+                </p>
+            </div>
+        </section>
+
     </main>
+
+    <div id="detail-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white border border-amber-200 rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-xl transform scale-95 transition-transform duration-300" id="modal-container">
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-stone-500 hover:text-stone-900 w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center transition-colors font-bold">
+                &times;
+            </button>
+            <div id="modal-content" class="space-y-4">
+            </div>
+        </div>
+    </div>
+    <script>
+        function switchTab(sectionId) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50 flex items-center gap-2";
+            });
+
+            const activeBtn = document.getElementById('btn-' + sectionId);
+            activeBtn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md flex items-center gap-2";
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openModal(title, text) {
+            const modal = document.getElementById('detail-modal');
+            const container = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+
+            content.innerHTML = `
+                <div class="flex items-center gap-3 mb-2">
+                    <h3 class="text-xl font-bold text-stone-900">${title}</h3>
+                </div>
+                <p class="text-stone-600 text-sm leading-relaxed">${text}</p>
+                <div class="pt-4 border-t border-amber-100 flex justify-end">
+                    <button onclick="closeModal()" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold transition-colors">
+                        Close
+                    </button>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                container.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detail-modal');
+            const container = document.getElementById('modal-container');
+
+            modal.classList.add('opacity-0');
+            container.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('detail-modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
 </body>
 </html>
