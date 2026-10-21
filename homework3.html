@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 3 — Comprehensive Cryptographic Analysis & Security Evaluation</title>
+    <title>Homework 3 — Advanced Cryptographic Analysis & Security Evaluation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -58,13 +58,13 @@
             
             <nav class="flex flex-wrap justify-center gap-1.5 bg-amber-100/70 p-1.5 rounded-2xl border border-amber-200">
                 <button onclick="switchTab('section1')" id="btn-section1" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md">
-                    1. Encryption & Comparison
+                    1. Encryption & Schemes
                 </button>
                 <button onclick="switchTab('section2')" id="btn-section2" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
                     2. Statistical Cryptanalysis
                 </button>
                 <button onclick="switchTab('section3')" id="btn-section3" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
-                    3. Key-Space Attack & Security
+                    3. Key-Space Attacks & Security
                 </button>
             </nav>
         </div>
@@ -75,31 +75,31 @@
         <section id="section1" class="tab-content space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
                 <h3 class="text-xl font-bold text-amber-900 text-center">
-                    Part 1: Toy ECC Encryption/Decryption and Caesar Cipher Implementation
+                    Toy ECC Encryption/Decryption and Italian Caesar Cipher Implementation
                 </h3>
                 
                 <p class="text-xs sm:text-sm text-stone-600 leading-relaxed text-center">
-                    Using the toy cryptographic scheme based on the elliptic curve \(E/\mathbb{F}_{17}: y^2 \equiv x^3 + 7 \pmod{17}\) with base point \(G(1,5)\) and subgroup order \(n=9\), we execute message encryption and decryption, followed by a parallel implementation of the Caesar cipher and structural comparison.
+                    Integrating parameters established in Homework 1 (\(E/\mathbb{F}_{17}: y^2 \equiv x^3 + 7 \pmod{17}\), base point \(G(1,5)\), subgroup order \(n=9\)) and structural principles from Homework 2 (secp256k1 key architecture), we execute message encryption, decryption, and parallel comparison against the Caesar cipher over the traditional 21-letter Italian alphabet.
                 </p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
-                        <h4 class="text-sm font-bold text-amber-800">Toy ECC Scheme (ElGamal Variant) Walkthrough</h4>
+                        <h4 class="text-sm font-bold text-amber-800">Toy ECC Scheme</h4>
                         <ul class="text-xs text-stone-700 space-y-2 list-disc list-inside leading-relaxed">
                             <li><strong>Key Roles:</strong> Private key \(k \in [1, 8]\) (let \(k=3\)). Public key \(P = k \cdot G = 3(1,5) = (5,9)\).</li>
-                            <li><strong>Message Encoding:</strong> Represent plaintext as a valid curve point \(M(2, 10)\).</li>
+                            <li><strong>Message Encoding:</strong> Represent plaintext as valid curve point \(M(2, 10)\).</li>
                             <li><strong>Encryption Steps:</strong> Select ephemeral key \(r = 2\). Compute \(C_1 = r \cdot G = 2(1,5) = (2,10)\) and \(C_2 = M + r \cdot P = (2,10) + 2(5,9) = (1,12)\). Ciphertext is \(((2,10), (1,12))\).</li>
                             <li><strong>Decryption Steps:</strong> Receiver computes \(M = C_2 - k \cdot C_1 = (1,12) - 3(2,10) = (2,10)\).</li>
                         </ul>
                     </div>
 
                     <div class="p-5 bg-orange-50/50 border border-orange-200 rounded-2xl space-y-3">
-                        <h4 class="text-sm font-bold text-terracotta-700">Caesar Cipher Implementation Walkthrough</h4>
+                        <h4 class="text-sm font-bold text-terracotta-700">Italian Caesar Cipher</h4>
                         <ul class="text-xs text-stone-700 space-y-2 list-disc list-inside leading-relaxed">
-                            <li><strong>Key Role:</strong> Shift integer \(s \in [0, 25]\) (let \(s=3\)).</li>
-                            <li><strong>Message Encoding:</strong> Plaintext string representing the message, e.g., "CRYPTO".</li>
-                            <li><strong>Encryption Steps:</strong> Shift each letter forward modulo 26: \(C_i = (P_i + 3) \bmod 26\). "CRYPTO" becomes "FUBSWR".</li>
-                            <li><strong>Decryption Steps:</strong> Shift characters backward modulo 26: \(P_i = (C_i - 3) \bmod 26\). Recovers "CRYPTO".</li>
+                            <li><strong>Alphabet Set:</strong> Traditional Italian 21-letter set: A, B, C, D, E, F, G, H, I, L, M, N, O, P, Q, R, S, T, U, V, Z.</li>
+                            <li><strong>Key Role:</strong> Shift integer \(s \in [0, 20]\) (let \(s=3\)).</li>
+                            <li><strong>Encryption Steps:</strong> Shift characters forward modulo 21: \(C_i = (P_i + 3) \bmod 21\). "CRITTO" becomes "EUKWWR".</li>
+                            <li><strong>Decryption Steps:</strong> Shift characters backward modulo 21: \(P_i = (C_i - 3) \bmod 21\). Recovers "CRITTO".</li>
                         </ul>
                     </div>
                 </div>
@@ -108,15 +108,15 @@
                     <h4 class="text-sm font-bold text-stone-900 text-center">Interactive Encryption & Decryption Simulator</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="space-y-2">
-                            <label class="block text-xs font-semibold text-stone-700">Plaintext Message:</label>
-                            <input type="text" id="plainInput" value="HELLO" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl">
+                            <label class="block text-xs font-semibold text-stone-700">Plaintext Message (Italian Alphabet):</label>
+                            <input type="text" id="plainInput" value="CIAO" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl">
                             <button onclick="runSimulations()" class="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md">
                                 Execute Encryption
                             </button>
                         </div>
                         <div class="space-y-2">
-                            <label class="block text-xs font-semibold text-stone-700">Caesar Ciphertext (\(s=3\)):</label>
-                            <div id="caesarOutput" class="p-2 bg-white border border-amber-300 rounded-xl text-xs font-mono text-stone-800 h-10 flex items-center">KHOOR</div>
+                            <label class="block text-xs font-semibold text-stone-700">Caesar Ciphertext (\(s=3, \bmod 21\)):</label>
+                            <div id="caesarOutput" class="p-2 bg-white border border-amber-300 rounded-xl text-xs font-mono text-stone-800 h-10 flex items-center">FLD0</div>
                         </div>
                         <div class="space-y-2">
                             <label class="block text-xs font-semibold text-stone-700">Toy ECC Cipherpoint (\(r=2\)):</label>
@@ -130,19 +130,19 @@
                         <thead>
                             <tr class="border-b border-amber-200 bg-amber-50/40 text-amber-900">
                                 <th class="py-3 px-4 text-center">Comparison Criteria</th>
-                                <th class="py-3 px-4 text-center">Caesar Cipher</th>
+                                <th class="py-3 px-4 text-center">Italian Caesar Cipher</th>
                                 <th class="py-3 px-4 text-center">Toy ECC Scheme</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-amber-100">
                             <tr>
                                 <td class="py-3 px-4 font-bold text-stone-900 text-center">Procedure & Mathematics</td>
-                                <td class="py-3 px-4 text-center">Linear modular arithmetic over character indices (\(\bmod 26\))</td>
+                                <td class="py-3 px-4 text-center">Linear modular arithmetic over 21 character indices (\(\bmod 21\))</td>
                                 <td class="py-3 px-4 text-center">Non-linear algebraic point addition and doubling over finite field \(\mathbb{F}_{17}\)</td>
                             </tr>
                             <tr>
                                 <td class="py-3 px-4 font-bold text-stone-900 text-center">Key Space</td>
-                                <td class="py-3 px-4 text-center font-mono">26 possible keys</td>
+                                <td class="py-3 px-4 text-center font-mono">21 possible keys (\(s \in [0, 20]\))</td>
                                 <td class="py-3 px-4 text-center font-mono">8 possible private keys (\(n=9\))</td>
                             </tr>
                             <tr>
@@ -159,15 +159,15 @@
         <section id="section2" class="tab-content hidden space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
                 <h3 class="text-xl font-bold text-amber-900 text-center">
-                    Part 2: Statistical Cryptanalysis of the Caesar Cipher & Length Testing
+                    Statistical Cryptanalysis of the Italian Caesar Cipher & Length Testing
                 </h3>
                 
                 <p class="text-xs sm:text-sm text-stone-600 leading-relaxed text-center">
-                    Automated cryptanalysis algorithm exploiting English letter frequency distributions (Chi-square goodness-of-fit testing) tested across ciphertexts of varying lengths.
+                    Automated cryptanalysis algorithm exploiting traditional Italian letter frequency distributions (E: 11.79%, A: 11.74%, I: 11.28%, O: 9.83%, U: 3.01%) using Chi-square goodness-of-fit testing across ciphertexts of varying lengths.
                 </p>
 
                 <div class="bg-amber-50/70 border border-amber-200 p-6 rounded-2xl space-y-4">
-                    <label class="block text-amber-900 font-semibold text-sm">Select Test Ciphertext Length Corpus:</label>
+                    <label class="block text-amber-900 font-semibold text-sm">Select Test Ciphertext Length Corpus (Italian Language):</label>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <button onclick="loadCorpus('short')" class="p-3 bg-white border border-amber-300 rounded-xl hover:bg-amber-100 text-xs font-semibold text-stone-800 transition-all">
                             Short Corpus (15 chars)
@@ -176,10 +176,10 @@
                             Medium Corpus (80 chars)
                         </button>
                         <button onclick="loadCorpus('long')" class="p-3 bg-white border border-amber-300 rounded-xl hover:bg-amber-100 text-xs font-semibold text-stone-800 transition-all">
-                            Long Corpus (350 chars)
+                            Long Corpus (300 chars)
                         </button>
                     </div>
-                    <textarea id="corpusInput" rows="3" class="w-full p-3 text-sm text-stone-800 bg-white border border-amber-300 rounded-xl font-mono">KHOOR ZRUOG</textarea>
+                    <textarea id="corpusInput" rows="3" class="w-full p-3 text-sm text-stone-800 bg-white border border-amber-300 rounded-xl font-mono">FLD0 PRQGR</textarea>
                     <button onclick="runLengthAnalysis()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-terracotta-600 hover:from-amber-500 hover:to-terracotta-500 text-white font-bold text-sm shadow-md transition-all">
                         Execute Frequency Cryptanalysis & Chi-Square Scoring
                     </button>
@@ -196,9 +196,9 @@
                     <div class="bg-amber-50/40 border border-amber-200 p-6 rounded-2xl space-y-3">
                         <h4 class="text-sm font-bold text-amber-800">Effectiveness and Limitations Discussion</h4>
                         <div class="text-xs text-stone-700 space-y-2 leading-relaxed">
-                            <p><strong>Effectiveness on Long Texts:</strong> Letter frequency distributions converge closely to theoretical English benchmarks (\(E \approx 12.7\%\), \(T \approx 9.1\%\)), yielding near 100% key recovery accuracy.</p>
-                            <p><strong>Limitations on Short Texts:</strong> Statistical noise and missing high-frequency characters cause false positives in Chi-square scoring.</p>
-                            <p><strong>Alternative Approaches:</strong> Exhaustive key search (\(26\) trials) is trivial for Caesar. For complex substitution, n-gram scoring (bigrams/trigrams) outperforms single-letter frequency on short samples.</p>
+                            <p><strong>Effectiveness on Long Texts:</strong> Letter frequency distributions converge closely to theoretical Italian benchmarks (\(E \approx 11.79\%\), \(A \approx 11.74\%\), \(I \approx 11.28\%\), \(O \approx 9.83\%\), \(U \approx 3.01\%\)), yielding 100% key recovery accuracy.</p>
+                            <p><strong>Limitations on Short Texts:</strong> Statistical noise and missing high-frequency vowels cause false positives in Chi-square scoring.</p>
+                            <p><strong>Alternative Approaches:</strong> Exhaustive key search (\(21\) trials) is trivial for the Italian Caesar cipher. For complex substitution, n-gram scoring (bigrams/trigrams) outperforms single-letter frequency on short samples.</p>
                         </div>
                     </div>
                 </div>
@@ -208,11 +208,11 @@
         <section id="section3" class="tab-content hidden space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
                 <h3 class="text-xl font-bold text-amber-900 text-center">
-                    Part 3: Restricted Key-Space Attack on Toy ECC vs. Real ECC Security
+                    Restricted Key-Space Attack on Toy ECC vs. Real ECC Security
                 </h3>
                 
                 <p class="text-xs sm:text-sm text-stone-600 leading-relaxed text-center">
-                    Implementation of a brute-force key-recovery attack exploiting the restricted key space of the toy curve, followed by comparative security analysis against real secp256k1 parameters.
+                    Implementation of a brute-force key-recovery attack exploiting the restricted key space of the toy curve from Homework 1, followed by comparative security analysis against real secp256k1 parameters from Homework 2.
                 </p>
 
                 <div class="bg-amber-50/70 border border-amber-200 p-6 rounded-2xl space-y-4">
@@ -231,9 +231,9 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
-                        <h4 class="text-sm font-bold text-amber-800">Attack Comparison: Toy ECC vs. Caesar Statistical Attack</h4>
+                        <h4 class="text-sm font-bold text-amber-800">Attack Comparison: Toy ECC vs. Italian Caesar Statistical Attack</h4>
                         <p class="text-xs text-stone-700 leading-relaxed">
-                            The toy ECC attack is an <strong>algebraic brute-force search</strong> over a small discrete cyclic group (\(8\) candidate scalars), verifying point equality. Conversely, the Caesar statistical attack exploits <strong>linguistic redundancy and frequency structures</strong> in human natural language rather than brute-forcing numerical keys.
+                            The toy ECC attack is an <strong>algebraic brute-force search</strong> over a small discrete cyclic group (\(8\) candidate scalars), verifying point equality. Conversely, the Italian Caesar statistical attack exploits <strong>linguistic redundancy and frequency structures</strong> in Italian text rather than brute-forcing numerical keys.
                         </p>
                     </div>
 
@@ -253,12 +253,14 @@
         </section>
 
     </main>
+<script>
+        const italianAlphabet = ['A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','U','V','Z'];
+        const italianFreq = [
+            0.1174, 0.0092, 0.0450, 0.0373, 0.1179, 0.0115, 0.0164, 0.0064,
+            0.1128, 0.0651, 0.0251, 0.0688, 0.0983, 0.0305, 0.0051, 0.0637,
+            0.0498, 0.0562, 0.0301, 0.0210, 0.0049
+        ];
 
-    <footer class="border-t border-amber-200 bg-white/40 py-6 mt-12 text-center text-xs text-stone-500">
-        <p>Homework 3 — Comprehensive Cryptographic Analysis & Security Evaluation | Academic Deliverable</p>
-    </footer>
-
-    <script>
         function switchTab(sectionId) {
             document.querySelectorAll('.tab-content').forEach(el => {
                 el.classList.add('hidden');
@@ -276,16 +278,15 @@
         }
 
         function runSimulations() {
-            const msg = document.getElementById('plainInput').value || "HELLO";
+            const msg = (document.getElementById('plainInput').value || "CIAO").toUpperCase();
             let caesar = "";
             for (let i = 0; i < msg.length; i++) {
-                let code = msg.charCodeAt(i);
-                if (code >= 65 && code <= 90) {
-                    caesar += String.fromCharCode(((code - 65 + 3) % 26) + 65);
-                } else if (code >= 97 && code <= 122) {
-                    caesar += String.fromCharCode(((code - 97 + 3) % 26) + 97);
+                let char = msg[i];
+                let idx = italianAlphabet.indexOf(char);
+                if (idx !== -1) {
+                    caesar += italianAlphabet[(idx + 3) % 21];
                 } else {
-                    caesar += msg[i];
+                    caesar += char;
                 }
             }
             document.getElementById('caesarOutput').innerText = caesar;
@@ -293,9 +294,9 @@
         }
 
         const corpora = {
-            short: "KHOOR ZRUOG",
-            medium: "WKH TXLFn EURZQ IRA MXPSV RYHU WKH Oazy GRJ",
-            long: "FRQVWDqw FUbSWRJUDSK\vc VHFXULWB GHBlQGV RQ WKH LQtUDFWDELOLWB RI PDWKHPDWLFDO SUREOHPS VXFK DV WKH HOOLSWLF FXUYH GLVFUHWH ORJDULWKP SUREOHP ZKLFK VUYHV AS WKH IRXQGDWLRQ RI PRGHUQ EORFNFKDLQ DQG FUbSWRJUDSKLF ZDOOHWV VXFK DV HWKHUHOXN DQG ELWFRLQ V\VWHPV"
+            short: "FLD0 PRQGR",
+            medium: "OD CRUWWXQD IDSRULVFD OD PHQWH SUHSDUDWD QHOOD ULFLRFD DFFDGHPLLFD",
+            long: "LA FUULWRJUDILD PRGHUQD VL EDVD VXSSULQFLSL PDWHPDWLFL FRPSOHVVL FRPH LO SUREOHPD GHO ORJDULWPR GLVFUHWR VX FXUYH HOOLSWLFKH L VLVWHPL GL FUUDWXUD FRPH TXHOOL D CHYLD SUEEOLFD JDUDQWLVFRQR OD FRQILGHQ]LDOLWD H OLQWHJULWD GHL GDWL QHOOH UHWL GL FRPXQLFD]LRQH"
         };
 
         function loadCorpus(type) {
@@ -303,45 +304,39 @@
         }
 
         function runLengthAnalysis() {
-            const cipher = document.getElementById('corpusInput').value;
-            const englishFreq = [
-                0.082, 0.015, 0.028, 0.043, 0.127, 0.022, 0.020, 0.061,
-                0.070, 0.002, 0.008, 0.040, 0.024, 0.067, 0.075, 0.019,
-                0.001, 0.060, 0.063, 0.091, 0.028, 0.010, 0.024, 0.001,
-                0.020, 0.001
-            ];
-
+            const cipher = document.getElementById('corpusInput').value.toUpperCase();
             let bestShift = 0;
             let minChiSq = Infinity;
             let bestDecrypted = "";
 
-            for (let shift = 0; shift < 26; shift++) {
+            for (let shift = 0; shift < 21; shift++) {
                 let decrypted = "";
                 for (let i = 0; i < cipher.length; i++) {
-                    let c = cipher[i];
-                    if (c.match(/[a-z]/i)) {
-                        let code = cipher.charCodeAt(i);
-                        let base = code >= 65 && code <= 90 ? 65 : 97;
-                        decrypted += String.fromCharCode(((code - base - shift + 26) % 26) + base);
+                    let char = cipher[i];
+                    let idx = italianAlphabet.indexOf(char);
+                    if (idx !== -1) {
+                        let origIdx = (idx - shift + 21) % 21;
+                        decrypted += italianAlphabet[origIdx];
                     } else {
-                        decrypted += c;
+                        decrypted += char;
                     }
                 }
 
-                let counts = new Array(26).fill(0);
+                let counts = new Array(21).fill(0);
                 let total = 0;
                 for (let i = 0; i < decrypted.length; i++) {
-                    let char = decrypted[i].toLowerCase();
-                    if (char >= 'a' && char <= 'z') {
-                        counts[char.charCodeAt(0) - 97]++;
+                    let char = decrypted[i];
+                    let idx = italianAlphabet.indexOf(char);
+                    if (idx !== -1) {
+                        counts[idx]++;
                         total++;
                     }
                 }
 
                 if (total > 0) {
                     let chiSq = 0;
-                    for (let i = 0; i < 26; i++) {
-                        let expected = englishFreq[i] * total;
+                    for (let i = 0; i < 21; i++) {
+                        let expected = italianFreq[i] * total;
                         if (expected > 0) {
                             chiSq += Math.pow(counts[i] - expected, 2) / expected;
                         }
@@ -355,8 +350,9 @@
             }
 
             document.getElementById('lengthResults').innerHTML = `
+                <p><strong>Alphabet Set:</strong> Italian Traditional (21 letters)</p>
                 <p><strong>Corpus Length:</strong> ${cipher.length} characters</p>
-                <p><strong>Recovered Key (Shift):</strong> ${bestShift}</p>
+                <p><strong>Recovered Shift Key:</strong> ${bestShift}</p>
                 <p><strong>Decrypted Text:</strong> ${bestDecrypted}</p>
                 <p><strong>Chi-Square Metric:</strong> ${minChiSq.toFixed(4)}</p>
             `;
@@ -386,8 +382,11 @@
             }
 
             document.getElementById('attackResult').innerHTML = `
-                Attack successful! Exhaustive search tested 8 points in \(\\langle G \\rangle\). Found private key <strong>k = ${foundKey}</strong> matching public key P(5,9).
+                Attack successful! Exhaustive search tested 8 points in \\(\\langle G \\rangle\\). Found private key <strong>k = ${foundKey}</strong> matching public key P(5,9).
             `;
+            if (window.MathJax) {
+                MathJax.typesetPromise([document.getElementById('attackResult')]);
+            }
         }
     </script>
 </body>
