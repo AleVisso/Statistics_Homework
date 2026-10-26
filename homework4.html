@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 4 — Penetration Process Simulation & Stochastic Convergence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warm: {
+                            bg: '#fcf8f2',
+                            card: '#ffffff',
+                            border: '#e7d7c1',
+                            accent: '#b45309',
+                            terracotta: '#c2410c',
+                            amber: '#d97706',
+                            muted: '#78716c'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #fcf8f2;
+            color: #292524;
+        }
+        .warm-glow {
+            box-shadow: 0 10px 30px rgba(180, 83, 9, 0.08);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fcf8f2; }
+        ::-webkit-scrollbar-thumb { background: #d7ccc8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bcaaa4; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-white">
+
+    <header class="border-b border-amber-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                                <h1 class="text-xl font-bold bg-gradient-to-r from-amber-700 via-terracotta-600 to-orange-700 bg-clip-text text-transparent">
+                    Homework 4 — Penetration Process Simulation & Stochastic Convergence
+                </h1>
+                <p class="text-xs text-stone-500 mt-0.5">Bernoulli & Rademacher Models, LLN, and CLT Empirical Verification</p>
+
+            </div>
+            
+            <nav class="flex flex-wrap justify-center gap-1.5 bg-amber-100/70 p-1.5 rounded-2xl border border-amber-200">
+           </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+
+        <section id="section1" class="tab-content space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-6xl mx-auto space-y-6">
+                <div class="bg-amber-50/60 border border-amber-200 p-6 rounded-2xl space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="space-y-1.5">
+                        </div>
+                        <div class="space-y-1.5">
+                        </div>
+                        <div class="space-y-1.5">
+                        </div>
+                        <div class="space-y-1.5" id="probContainer" style="display: none;">
+                        </div>
+                        <div class="space-y-1.5">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center pt-2">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-center">
+                    <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-2xl">
+                    </div>
+                    <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-2xl">
+                    </div>
+                    <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-2xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="p-4 bg-white border border-amber-200 rounded-2xl space-y-2">
+                    </div>
+
+                    <div class="p-4 bg-white border border-amber-200 rounded-2xl space-y-2">
+                        <div class="relative h-72">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section2" class="tab-content hidden space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <div class="space-y-6 text-stone-700 text-xs sm:text-sm leading-relaxed">
+                    </div>
+
+                    <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section3" class="tab-content hidden space-y-8">
+        </section>
+
+    </main>
+    <script>           
+    </script>
+</body>
+</html>
