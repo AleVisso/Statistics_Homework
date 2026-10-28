@@ -50,15 +50,23 @@
     <header class="border-b border-amber-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                                <h1 class="text-xl font-bold bg-gradient-to-r from-amber-700 via-terracotta-600 to-orange-700 bg-clip-text text-transparent">
+                <h1 class="text-xl font-bold bg-gradient-to-r from-amber-700 via-terracotta-600 to-orange-700 bg-clip-text text-transparent">
                     Homework 4 — Penetration Process Simulation & Stochastic Convergence
                 </h1>
                 <p class="text-xs text-stone-500 mt-0.5">Bernoulli & Rademacher Models, LLN, and CLT Empirical Verification</p>
-
             </div>
             
             <nav class="flex flex-wrap justify-center gap-1.5 bg-amber-100/70 p-1.5 rounded-2xl border border-amber-200">
-           </nav>
+                <button onclick="switchTab('section1')" id="btn-section1" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md">
+                    1. Interactive Simulation
+                </button>
+                <button onclick="switchTab('section2')" id="btn-section2" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
+                    2. Mathematical Analysis
+                </button>
+                <button onclick="switchTab('section3')" id="btn-section3" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
+                    3. Cybersecurity Interpretation
+                </button>
+            </nav>
         </div>
     </header>
 
@@ -66,39 +74,79 @@
 
         <section id="section1" class="tab-content space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-6xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    System Penetration Stochastic Simulator
+                </h3>
+                
+                <p class="text-xs sm:text-sm text-stone-600 leading-relaxed text-center max-w-3xl mx-auto">
+                    Simulate \(m\) independent attackers targeting \(n\) systems. Each attack step generates an i.i.d. random variable \(X_i\). Observe trajectories and convergence behavior of total score \(S_n\), average score \(S_n/n\), and normalized score \(S_n/\sqrt{n}\).
+                </p>
+
                 <div class="bg-amber-50/60 border border-amber-200 p-6 rounded-2xl space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-700">Number of Steps (\(n\)):</label>
+                            <input type="number" id="paramN" value="200" min="10" max="2000" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl focus:outline-none focus:border-amber-500">
                         </div>
                         <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-700">Number of Attackers (\(m\)):</label>
+                            <input type="number" id="paramM" value="100" min="5" max="1000" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl focus:outline-none focus:border-amber-500">
                         </div>
                         <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-700">Model Selection:</label>
+                            <select id="paramModel" onchange="toggleBernoulliProb()" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl focus:outline-none focus:border-amber-500">
+                                <option value="rademacher">Rademacher (X_i in {-1, +1}, p=0.5)</option>
+                                <option value="bernoulli">Bernoulli (X_i in {0, 1})</option>
+                            </select>
                         </div>
                         <div class="space-y-1.5" id="probContainer" style="display: none;">
+                            <label class="block text-xs font-semibold text-stone-700">Success Probability (\(p\)):</label>
+                            <input type="number" id="paramP" value="0.5" min="0.01" max="0.99" step="0.05" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl focus:outline-none focus:border-amber-500">
                         </div>
                         <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-700">Normalization Metric:</label>
+                            <select id="paramMetric" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl focus:outline-none focus:border-amber-500">
+                                <option value="normalized">Normalized Score: S_n / sqrt(n)</option>
+                                <option value="average">Average Score: S_n / n</option>
+                                <option value="total">Total Score: S_n</option>
+                            </select>
                         </div>
                     </div>
 
                     <div class="flex justify-center pt-2">
+                        <button onclick="runSimulation()" class="px-8 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-terracotta-600 hover:from-amber-500 hover:to-terracotta-500 text-white font-bold text-xs shadow-md transition-all">
+                            Run Stochastic Simulation
+                        </button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-center">
                     <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-2xl">
+                        <span class="block text-xs text-stone-500 uppercase font-semibold">Empirical Mean ( \(\mu_{emp}\) )</span>
+                        <span id="statMean" class="text-lg font-bold font-mono text-amber-900">-</span>
                     </div>
                     <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-2xl">
+                        <span class="block text-xs text-stone-500 uppercase font-semibold">Empirical Variance (\(\sigma^2_{emp}\))</span>
+                        <span id="statVar" class="text-lg font-bold font-mono text-amber-900">-</span>
                     </div>
                     <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-2xl">
+                        <span class="block text-xs text-stone-500 uppercase font-semibold">Theoretical Variance (\(\sigma^2_{th}\))</span>
+                        <span id="statThVar" class="text-lg font-bold font-mono text-terracotta-700">-</span>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="p-4 bg-white border border-amber-200 rounded-2xl space-y-2">
+                        <h4 class="text-xs font-bold text-stone-800 text-center uppercase tracking-wider">Attacker Score Trajectories over Time (\(t = 1 \dots n\))</h4>
+                        <div class="relative h-72">
+                            <canvas id="chartTrajectories"></canvas>
+                        </div>
                     </div>
 
                     <div class="p-4 bg-white border border-amber-200 rounded-2xl space-y-2">
+                        <h4 class="text-xs font-bold text-stone-800 text-center uppercase tracking-wider">Terminal Distribution at Step \(n\) vs. Gaussian Benchmark</h4>
                         <div class="relative h-72">
+                            <canvas id="chartHistogram"></canvas>
                         </div>
                     </div>
                 </div>
@@ -107,23 +155,144 @@
 
         <section id="section2" class="tab-content hidden space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    Theoretical Analysis of Convergence Laws
+                </h3>
+                
                 <div class="space-y-6 text-stone-700 text-xs sm:text-sm leading-relaxed">
+                    <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="text-sm font-bold text-amber-800">1. Stochastic Increment Models</h4>
+                        <p>
+                            Let \(X_1, X_2, \dots, X_n\) be independent and identically distributed (i.i.d.) random variables representing incremental scores:
+                        </p>
+                        <ul class="list-disc list-inside space-y-1 pl-2">
+                            <li><strong>Bernoulli Model:</strong> \(X_i \in \{0, 1\}\) with \(P(X_i = 1) = p\). Expectation \(\mathbb{E}[X_i] = p\), Variance \(\text{Var}(X_i) = p(1-p)\).</li>
+                            <li><strong>Rademacher Model:</strong> \(X_i \in \{-1, +1\}\) with \(P(X_i = +1) = 1/2\). Expectation \(\mathbb{E}[X_i] = 0\), Variance \(\text{Var}(X_i) = 1\).</li>
+                        </ul>
                     </div>
 
                     <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="text-sm font-bold text-amber-800">2. Behavior of Scaled Aggregates under Different Normalizations</h4>
+                        <p>
+                            We analyze three distinct scalings of the cumulative process \(S_n = \sum_{i=1}^n X_i\):
+                        </p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs text-stone-700 mt-2">
+                                <thead>
+                                    <tr class="border-b border-amber-200 bg-amber-100/50 text-amber-900">
+                                        <th class="py-2 px-3">Quantity</th>
+                                        <th class="py-2 px-3">Expression</th>
+                                        <th class="py-2 px-3">Expected Value \(\mathbb{E}[\cdot]\)</th>
+                                        <th class="py-2 px-3">Variance \(\text{Var}(\cdot)\) (Rademacher)</th>
+                                        <th class="py-2 px-3">Asymptotic Behavior (\(n \to \infty\))</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-amber-100 font-mono">
+                                    <tr>
+                                        <td class="py-2 px-3 font-bold font-sans">Total Score</td>
+                                        <td class="py-2 px-3">\(S_n\)</td>
+                                        <td class="py-2 px-3">\(n \mathbb{E}[X_1]\)</td>
+                                        <td class="py-2 px-3">\(n\)</td>
+                                        <td class="py-2 px-3">Diverges (\(\sigma \to \infty\))</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-3 font-bold font-sans">Average Score</td>
+                                        <td class="py-2 px-3">\(S_n / n\)</td>
+                                        <td class="py-2 px-3">\(\mathbb{E}[X_1]\)</td>
+                                        <td class="py-2 px-3">\(1/n\)</td>
+                                        <td class="py-2 px-3">Collapses to Point Mass \(\mu\) (LLN)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-3 font-bold font-sans">Normalized Score</td>
+                                        <td class="py-2 px-3">\(S_n / \sqrt{n}\)</td>
+                                        <td class="py-2 px-3">\(\sqrt{n} \mathbb{E}[X_1]\)</td>
+                                        <td class="py-2 px-3">\(1\)</td>
+                                        <td class="py-2 px-3">Standard Normal \(N(0,1)\) (CLT)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
+                            <h4 class="text-sm font-bold text-amber-800">Law of Large Numbers (LLN)</h4>
+                            <p>
+                                According to the Weak Law of Large Numbers, the sample average \(\frac{S_n}{n}\) converges in probability to the theoretical mean \(\mu = \mathbb{E}[X_1]\):
+                            </p>
+                            <p class="font-mono text-center text-amber-900 py-1">
+                                \(\lim_{n \to \infty} P\left(\left| \frac{S_n}{n} - \mu \right| \ge \varepsilon\right) = 0 \quad \forall \varepsilon > 0\)
+                            </p>
+                            <p>
+                                As \(n\) grows, the variance \(\text{Var}(S_n/n) = \frac{\sigma^2}{n}\) vanishes to zero, forcing trajectory dispersion to contract around \(\mu\).
+                            </p>
+                        </div>
+
+                        <div class="p-5 bg-orange-50/50 border border-orange-200 rounded-2xl space-y-2">
+                            <h4 class="text-sm font-bold text-terracotta-700">Central Limit Theorem (CLT)</h4>
+                            <p>
+                                For the zero-mean Rademacher model (\(\mu = 0, \sigma^2 = 1\)), scaling by \(\sqrt{n}\) stabilizes variance precisely at 1. The normalized quantity converges in distribution to a Standard Gaussian:
+                            </p>
+                            <p class="font-mono text-center text-terracotta-900 py-1">
+                                \(\frac{S_n - n\mu}{\sigma \sqrt{n}} \xrightarrow{d} N(0, 1) \quad \text{as } n \to \infty\)
+                            </p>
+                            <p>
+                                This confirms that fluctuations around the mean remain bounded and follow a universal Gaussian profile regardless of discrete step increments.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <section id="section3" class="tab-content hidden space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    Cybersecurity Interpretation: Systems, Attackers, and Scale
+                </h3>
+                
+                <div class="space-y-6 text-stone-700 text-xs sm:text-sm leading-relaxed">
+                    <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="text-sm font-bold text-amber-800">Physical Meaning of the Model Variables</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Step Index (\(n\)):</strong> Represents system scale, target surface area, or time duration of an attack campaign across \(n\) defense layers/nodes.</li>
+                            <li><strong>Trajectory Count (\(m\)):</strong> Represents \(m\) distinct threat actors, independent hacking campaigns, or automated botnet instances executing attack vectors concurrently.</li>
+                            <li><strong>Bernoulli Model (\(X_i \in \{0, 1\}\)):</strong> Models purely cumulative penetration metrics (e.g., total vulnerabilities exploited, compromised hosts, stolen credentials).</li>
+                            <li><strong>Rademacher Model (\(X_i \in \{-1, +1\}\)):</strong> Models competitive defensive dynamics, where \(+1\) represents successful attacker penetration and \(-1\) represents active defensive remediation, patch deployment, or incident response containment.</li>
+                        </ul>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-xl space-y-2">
+                            <h5 class="font-bold text-amber-900">Total Score (\(S_n\))</h5>
+                            <p class="text-stone-600">
+                                Unscaled cumulative impact. As system scale \(n\) expands, total potential breach exposure grows linearly, and absolute dispersion between attackers widens as \(\sqrt{n}\).
+                            </p>
+                        </div>
+                        <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-xl space-y-2">
+                            <h5 class="font-bold text-amber-900">Average Score (\(S_n/n\))</h5>
+                            <p class="text-stone-600">
+                                System-wide compromise density per unit node. By the LLN, as enterprise scale \(n \to \infty\), the average compromise rate stabilizes strictly at probability \(p\) (or \(0\) in symmetric defense).
+                            </p>
+                        </div>
+                        <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-xl space-y-2">
+                            <h5 class="font-bold text-amber-900">Normalized Score (\(S_n/\sqrt{n}\))</h5>
+                            <p class="text-stone-600">
+                                Risk-adjusted threat metric. By normalizing by \(\sqrt{n}\), security teams evaluate attacker proficiency independently of raw system size, comparing performance directly against standard normal confidence bounds.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="text-sm font-bold text-amber-800">Practical Defense Takeaways</h4>
+                        <p>
+                            In large-scale enterprise infrastructure (\(n \gg 1\)), while average vulnerability density stabilizes predictably around expected baselines, total potential damage divergence across many attackers (\(m \gg 1\)) follows a Gaussian envelope. Security architects must size incident response capacity to absorb \(\pm 3\sigma \sqrt{n}\) tail-risk deviations predicted by the Central Limit Theorem.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </main>
-    <script>           
-    </script>
 </body>
 </html>
