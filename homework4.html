@@ -122,7 +122,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-center">
                     <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-2xl">
-                        <span class="block text-xs text-stone-500 uppercase font-semibold">Empirical Mean ( \(\mu_{emp}\) )</span>
+                        <span class="block text-xs text-stone-500 uppercase font-semibold">Empirical Mean (\(\mu_{emp}\))</span>
                         <span id="statMean" class="text-lg font-bold font-mono text-amber-900">-</span>
                     </div>
                     <div class="p-4 bg-amber-50/40 border border-amber-200 rounded-2xl">
@@ -144,7 +144,7 @@
                     </div>
 
                     <div class="p-4 bg-white border border-amber-200 rounded-2xl space-y-2">
-                        <h4 class="text-xs font-bold text-stone-800 text-center uppercase tracking-wider">Terminal Distribution at Step \(n\) vs. Gaussian Benchmark</h4>
+                        <h4 class="text-xs font-bold text-stone-800 text-center uppercase tracking-wider">Terminal Distribution at Step N vs. Gaussian Benchmark</h4>
                         <div class="relative h-72">
                             <canvas id="chartHistogram"></canvas>
                         </div>
@@ -294,5 +294,220 @@
         </section>
 
     </main>
+    <script>
+        let chartTrajectoriesInstance = null;
+        let chartHistogramInstance = null;
+
+        function switchTab(sectionId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50";
+            });
+
+            const activeBtn = document.getElementById('btn-' + sectionId);
+            activeBtn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md";
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleBernoulliProb() {
+            const model = document.getElementById('paramModel').value;
+            const probContainer = document.getElementById('probContainer');
+            probContainer.style.display = model === 'bernoulli' ? 'block' : 'none';
+        }
+
+        function generateRandomIncrement(model, p) {
+            if (model === 'rademacher') {
+                return Math.random() < 0.5 ? 1 : -1;
+            } else {
+                return Math.random() < p ? 1 : 0;
+            }
+        }
+
+        function runSimulation() {
+            const n = parseInt(document.getElementById('paramN').value) || 200;
+            const m = parseInt(document.getElementById('paramM').value) || 100;
+            const model = document.getElementById('paramModel').value;
+            const p = parseFloat(document.getElementById('paramP').value) || 0.5;
+            const metric = document.getElementById('paramMetric').value;
+
+            const trajectories = [];
+            const terminalValues = [];
+
+            for (let j = 0; j < m; j++) {
+                let currentSum = 0;
+                const path = [0];
+                for (let i = 1; i <= n; i++) {
+                    const step = generateRandomIncrement(model, p);
+                    currentSum += step;
+                    
+                    let val = currentSum;
+                    if (metric === 'average') {
+                        val = currentSum / i;
+                    } else if (metric === 'normalized') {
+                        val = currentSum / Math.sqrt(i);
+                    }
+                    path.push(val);
+                }
+                trajectories.push(path);
+                terminalValues.push(path[n]);
+            }
+
+            // Statistical calculations
+            const mean = terminalValues.reduce((a, b) => a + b, 0) / m;
+            const variance = terminalValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / m;
+
+            let theoreticalVar = 0;
+            if (model === 'rademacher') {
+                if (metric === 'total') theoreticalVar = n;
+                else if (metric === 'average') theoreticalVar = 1 / n;
+                else if (metric === 'normalized') theoreticalVar = 1;
+            } else {
+                const varX = p * (1 - p);
+                if (metric === 'total') theoreticalVar = n * varX;
+                else if (metric === 'average') theoreticalVar = varX / n;
+                else if (metric === 'normalized') theoreticalVar = varX;
+            }
+
+            document.getElementById('statMean').innerText = mean.toFixed(4);
+            document.getElementById('statVar').innerText = variance.toFixed(4);
+            document.getElementById('statThVar').innerText = theoreticalVar.toFixed(4);
+
+            plotTrajectories(n, trajectories, metric);
+            plotHistogram(terminalValues, model, metric, p, n);
+        }
+
+        function plotTrajectories(n, trajectories, metric) {
+            const ctx = document.getElementById('chartTrajectories').getContext('2d');
+            if (chartTrajectoriesInstance) chartTrajectoriesInstance.destroy();
+
+            const labels = Array.from({length: n + 1}, (_, i) => i);
+            const datasets = trajectories.slice(0, Math.min(trajectories.length, 30)).map((path, idx) => ({
+                label: `Attacker ${idx + 1}`,
+                data: path,
+                borderColor: `rgba(${180 + (idx * 5) % 60}, ${83 + (idx * 7) % 80}, 9, 0.4)`,
+                borderWidth: 1.2,
+                pointRadius: 0,
+                fill: false,
+                tension: 0.1
+            }));
+
+            chartTrajectoriesInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { title: { display: true, text: 'System Step (n)', color: '#78716c', font: { size: 10 } } },
+                        y: { title: { display: true, text: metric.toUpperCase(), color: '#78716c', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function plotHistogram(terminalValues, model, metric, p, n) {
+            const ctx = document.getElementById('chartHistogram').getContext('2d');
+            if (chartHistogramInstance) chartHistogramInstance.destroy();
+
+            const minVal = Math.min(...terminalValues);
+            const maxVal = Math.max(...terminalValues);
+            const numBins = 20;
+            const binWidth = (maxVal - minVal) / numBins || 0.1;
+
+            const bins = new Array(numBins).fill(0);
+            const binLabels = [];
+
+            for (let i = 0; i < numBins; i++) {
+                const bMin = minVal + i * binWidth;
+                binLabels.push((bMin + binWidth / 2).toFixed(2));
+            }
+
+            terminalValues.forEach(v => {
+                let binIdx = Math.floor((v - minVal) / binWidth);
+                if (binIdx >= numBins) binIdx = numBins - 1;
+                bins[binIdx]++;
+            });
+
+            const total = terminalValues.length;
+            const binDensities = bins.map(c => c / (total * binWidth));
+
+            // Gaussian Curve Overlay
+            let meanX = 0;
+            let varX = 1;
+            if (model === 'rademacher') {
+                meanX = 0;
+                varX = 1;
+            } else {
+                meanX = p;
+                varX = p * (1 - p);
+            }
+
+            let theoreticalMean = 0;
+            let theoreticalVar = 1;
+
+            if (metric === 'total') {
+                theoreticalMean = n * meanX;
+                theoreticalVar = n * varX;
+            } else if (metric === 'average') {
+                theoreticalMean = meanX;
+                theoreticalVar = varX / n;
+            } else if (metric === 'normalized') {
+                theoreticalMean = Math.sqrt(n) * meanX;
+                theoreticalVar = varX;
+            }
+
+            const gaussianCurve = binLabels.map(xStr => {
+                const x = parseFloat(xStr);
+                const sd = Math.sqrt(theoreticalVar);
+                if (sd === 0) return 0;
+                return (1 / (sd * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - theoreticalMean) / sd, 2));
+            });
+
+            chartHistogramInstance = new Chart(ctx, {
+                data: {
+                    labels: binLabels,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'Empirical Density',
+                            data: binDensities,
+                            backgroundColor: 'rgba(217, 119, 6, 0.5)',
+                            borderColor: 'rgba(180, 83, 9, 0.8)',
+                            borderWidth: 1,
+                            barPercentage: 0.95
+                        },
+                        {
+                            type: 'line',
+                            label: 'Gaussian Reference N(μ, σ²)',
+                            data: gaussianCurve,
+                            borderColor: '#c2410c',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true, labels: { font: { size: 10 } } } },
+                    scales: {
+                        x: { title: { display: true, text: 'Terminal Value', color: '#78716c', font: { size: 10 } } },
+                        y: { title: { display: true, text: 'Density', color: '#78716c', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        // Initialize default simulation on page load
+        window.onload = function() {
+            runSimulation();
+        };
+    </script>
 </body>
 </html>
