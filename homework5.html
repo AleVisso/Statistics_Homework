@@ -49,10 +49,15 @@
     <header class="border-b border-amber-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-amber-700 via-terracotta-600 to-orange-700 bg-clip-text text-transparent">
+                    Welford Recurrence & Statistical Sampling Inference
+                </h1>
+                <p class="text-xs text-stone-500 mt-0.5">Comprehensive Academic Deliverable — Online Statistical Computation & Monte Carlo Simulation</p>
             </div>
             
             <nav class="flex flex-wrap justify-center gap-1.5 bg-amber-100/70 p-1.5 rounded-2xl border border-amber-200">
                 <button onclick="switchTab('section1')" id="btn-section1" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md">
+                    1. Welford's Algorithm
                 </button>
                 <button onclick="switchTab('section2')" id="btn-section2" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
                 </button>
@@ -67,31 +72,54 @@
         <!-- SECTION 1: WELFORD'S ALGORITHM -->
         <section id="section1" class="tab-content space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    Exercise 1: Derivation and Implementation of Welford’s Recurrence Formulas
+                </h3>
+                
                 <div class="space-y-4 text-stone-700 text-xs sm:text-sm leading-relaxed">
+                    <p class="text-center font-medium text-stone-800">
+                        Welford’s algorithm provides a numerically stable, single-pass method to compute running means and sums of squares without retaining historical data points in memory.
+                    </p>
+
                     <div class="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-amber-800 text-sm">Derivation of the Mean Recurrence Formula</h4>
+                        <p>
+                            Let \(\mu_{k-1}\) denote the sample mean of the first \(k-1\) observations \(\{x_1, x_2, \dots, x_{k-1}\}\). When a new observation \(x_k\) arrives, the exact definition of the new mean \(\mu_k\) is:
+                        </p>
+                        $$ \mu_k = \frac{1}{k} \sum_{i=1}^k x_i = \frac{1}{k} \left( \sum_{i=1}^{k-1} x_i + x_k \right) $$
+                        <p>
+                            Recognizing that the sum of the first \(k-1\) elements equals \((k-1)\mu_{k-1}\), we substitute and expand:
+                        </p>
+                        $$ \mu_k = \frac{1}{k} \left( (k-1)\mu_{k-1} + x_k \right) = \frac{k-1}{k}\mu_{k-1} + \frac{x_k}{k} = \mu_{k-1} + \frac{x_k - \mu_{k-1}}{k} $$
                     </div>
 
                     <div class="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-3">
-                    </div>
-
-                    <div class="space-y-2">
-                        <div class="bg-stone-900 text-amber-200 p-4 rounded-2xl font-mono text-xs overflow-x-auto shadow-inner">
-                        </div>
+                        <h4 class="font-bold text-amber-800 text-sm">Derivation of the Sum of Squares (SS) Recurrence Formula</h4>
+                        <p>
+                            Let \(M_2^{(k)} = \sum_{i=1}^k (x_i - \mu_k)^2\) represent the sum of squared deviations from the current mean. Expanding for step \(k\):
+                        </p>
+                        $$ M_2^{(k)} = M_2^{(k-1)} + (x_k - \mu_{k-1})(x_k - \mu_k) $$
+                        <p>
+                            The sample variance is subsequently derived as \(s^2 = \frac{M_2^{(k)}}{k-1}\).
+                        </p>
                     </div>
 
                     <div class="p-5 bg-amber-50/40 border border-amber-200 rounded-2xl space-y-4">
+                        <h4 class="font-bold text-amber-900 text-center text-sm">Interactive Online Welford Stream Calculator</h4>
                         <div class="flex flex-col sm:flex-row gap-3 items-center">
+                            <input type="text" id="streamInput" placeholder="Enter comma-separated numbers (e.g., 4, 7, 2, 9, 5)" class="w-full p-2.5 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl focus:outline-none focus:border-amber-500 font-mono" value="4, 7, 2, 9, 5, 8, 3">
                             <button onclick="runWelfordDemo()" class="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md transition-all whitespace-nowrap">
+                                Compute Stream
                             </button>
                         </div>
                         <div id="welfordResult" class="text-xs font-mono bg-white p-4 rounded-xl border border-amber-200 space-y-1">
+                            Result metrics will appear here.
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 2: HACKER SAMPLING SIMULATION -->
         <section id="section2" class="tab-content hidden space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
                 <h3 class="text-xl font-bold text-amber-900 text-center">
@@ -103,10 +131,8 @@
                 <div class="bg-amber-50/60 border border-amber-200 p-6 rounded-2xl space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-1.5">
-                            <input type="number" id="simM" value="1000" min="10" max="10000" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl focus:outline-none focus:border-amber-500">
                         </div>
                         <div class="space-y-1.5">
-                            <input type="number" id="simN" value="50" min="2" max="2000" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl focus:outline-none focus:border-amber-500">
                         </div>
                     </div>
 
@@ -129,7 +155,6 @@
             </div>
         </section>
 
-        <!-- SECTION 3: INFERENTIAL ANALYSIS -->
         <section id="section3" class="tab-content hidden space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
                 <h3 class="text-xl font-bold text-amber-900 text-center">
@@ -142,13 +167,13 @@
                     </div>
 
                     <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
+                        <p>
+                        </p>
                         <ul class="list-disc list-inside space-y-1 pl-2">
                         </ul>
                     </div>
 
                     <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
-                        <p>
-                        </p>
                     </div>
                 </div>
             </div>
