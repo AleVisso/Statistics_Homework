@@ -29,6 +29,13 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
@@ -192,7 +199,7 @@
                     <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-2">
                         <h4 class="text-sm font-bold text-amber-800">1. Comparison with Theoretical Parameters</h4>
                         <p>
-                            The grand average of the sampling means across all \(m\) hackers converges precisely to the true theoretical population mean \(\mu = 5.0\). Similarly, the average of the individual sample variances converges to the true population variance \(\sigma^2 = 10.0\). This confirms the mathematical property of **unbiasedness** for sample statistics when computed using Welford's recurrence formulas.
+                            The grand average of the sampling means across all \(m\) hackers converges precisely to the true theoretical population mean \(\mu = 5.0\). Similarly, the average of the individual sample variances converges to the true population variance \(\sigma^2 = 10.0\). This confirms the mathematical property of <strong>unbiasedness</strong> for sample statistics when computed using Welford's recurrence formulas.
                         </p>
                     </div>
 
@@ -218,6 +225,7 @@
         </section>
 
     </main>
+
     <script>
         function switchTab(sectionId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -248,13 +256,16 @@
             }
             let sampleVar = arr.length > 1 ? M2 / (arr.length - 1) : 0;
 
-            document.getElementById('welfordResult').innerHTML = `
+            const resElem = document.getElementById('welfordResult');
+            resElem.innerHTML = `
                 <p><strong>Count (k):</strong> ${arr.length}</p>
-                <p><strong>Final Mean (\(\\mu\)):</strong> ${mean.toFixed(4)}</p>
-                <p><strong>Sum of Squares (\(M_2\)):</strong> ${M2.toFixed(4)}</p>
-                <p><strong>Sample Variance (\(s^2\)):</strong> ${sampleVar.toFixed(4)}</p>
+                <p><strong>Final Mean ($\\mu$):</strong> ${mean.toFixed(4)}</p>
+                <p><strong>Sum of Squares ($M_2$):</strong> ${M2.toFixed(4)}</p>
+                <p><strong>Sample Variance ($s^2$):</strong> ${sampleVar.toFixed(4)}</p>
             `;
-            if (window.MathJax) MathJax.typesetPromise([document.getElementById('welfordResult')]);
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([resElem]);
+            }
         }
 
         function runHackerSimulation() {
