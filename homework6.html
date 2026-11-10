@@ -66,6 +66,9 @@
                 <button onclick="switchTab('section1')" id="btn-section1" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md">
                     1. Riemann & Lebesgue
                 </button>
+                <button onclick="switchTab('section2')" id="btn-section2" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
+                    2. Normal CDF & Liouville
+                </button>
             </nav>
         </div>
     </header>
@@ -127,6 +130,69 @@
                 </div>
             </div>
         </section>
+
+        <section id="section2" class="tab-content hidden space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    Exercise 2: Numerical Computation of the Standard Normal CDF & Liouville's Theorem
+                </h3>
+                
+                <div class="space-y-4 text-stone-700 text-xs sm:text-sm leading-relaxed">
+                    <p>
+                        The cumulative distribution function (CDF) of the standard normal distribution is defined as:
+                    </p>
+                    $$ \Phi(x) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{x} e^{-t^2/2} dt $$
+
+                    <div class="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-amber-800 text-sm">Why Elementary Antiderivatives Fail: Liouville's Theorem</h4>
+                        <p>
+                            A longstanding result in differential algebra established by Joseph Liouville states that elementary functions (polynomials, exponentials, logarithms, trigonometric functions, and their finite compositions) cannot have an antiderivative that is also an elementary function unless certain algebraic conditions are met. Specifically, the integral $\int e^{-t^2} dt$ cannot be expressed in closed form using elementary functions. 
+                        </p>
+                        <p>
+                            To bridge this limitation, mathematics introduces the <strong>Error Function ($\text{erf}$)</strong> as a defined special function:
+                        </p>
+                        $$ \text{erf}(x) = \frac{2}{\sqrt{\pi}} \int_{0}^{x} e^{-t^2} dt $$
+                        <p>
+                            Through change of variables, the normal CDF links directly to the error function:
+                        </p>
+                        $$ \Phi(x) = \frac{1}{2} \left[ 1 + \text{erf}\left(\frac{x}{\sqrt{2}}\right) \right] $$
+                    </div>
+
+                    <div class="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-amber-800 text-sm">Numerical Approximation Approaches</h4>
+                        <ul class="list-disc list-inside space-y-2 pl-2">
+                            <li>
+                                <strong>Quadrature Methods (Simpson's / Trapezoidal):</strong> Numerical integration over truncated finite limits (e.g., from $-8$ to $x$). Simple to implement but computationally expensive for high precision.
+                            </li>
+                            <li>
+                                <strong>Power Series Expansion for $\text{erf}(x)$:</strong> 
+                                Using the Maclaurin series expansion of $e^{-t^2}$:
+                                $$ \text{erf}(x) = \frac{2}{\sqrt{\pi}} \sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{n! (2n+1)} $$
+                                This series converges rapidly for small $x$, though higher-precision demands careful management of floating-point cancellation.
+                            </li>
+                            <li>
+                                <strong>Asymptotic & Rational Approximations:</strong> High-performance statistical libraries (such as Abramowitz and Stegun or Hart's rational approximations) utilize piecewise rational Chebyshev polynomials to evaluate $\Phi(x)$ with machine precision in constant time.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
+     <script>
+        function switchTab(sectionId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50";
+            });
+
+            const activeBtn = document.getElementById('btn-' + sectionId);
+            activeBtn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md";
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        </script>
 </body>
 </html>
