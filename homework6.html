@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework — Riemann vs. Lebesgue Integration & Normal CDF Numerical Computation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warm: {
+                            bg: '#fcf8f2',
+                            card: '#ffffff',
+                            border: '#e7d7c1',
+                            accent: '#b45309',
+                            terracotta: '#c2410c',
+                            amber: '#d97706',
+                            muted: '#78716c'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background-color: #fcf8f2;
+            color: #292524;
+        }
+        .warm-glow {
+            box-shadow: 0 10px 30px rgba(180, 83, 9, 0.08);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fcf8f2; }
+        ::-webkit-scrollbar-thumb { background: #d7ccc8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bcaaa4; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-white">
+
+    <header class="border-b border-amber-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-amber-700 via-terracotta-600 to-orange-700 bg-clip-text text-transparent">
+                    Advanced Numerical Methods & Integration Theory
+                </h1>
+                <p class="text-xs text-stone-500 mt-0.5">Riemann vs. Lebesgue Integration & Standard Normal CDF Computation</p>
+            </div>
+            
+            <nav class="flex flex-wrap justify-center gap-1.5 bg-amber-100/70 p-1.5 rounded-2xl border border-amber-200">
+                <button onclick="switchTab('section1')" id="btn-section1" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md">
+                    1. Riemann & Lebesgue
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+
+        <section id="section1" class="tab-content space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    Exercise 1: Riemann vs. Lebesgue Integration and Numerical Approximations
+                </h3>
+                
+                <div class="space-y-4 text-stone-700 text-xs sm:text-sm leading-relaxed">
+                    <p>
+                        Integration theory provides formal frameworks to compute the "area under a curve" or, more generally, measure-theoretic expectations. The two primary paradigms differ fundamentally in how they partition space:
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
+                            <h4 class="font-bold text-amber-800 text-sm">Riemann Integration (Domain Partitioning)</h4>
+                            <p>
+                                The Riemann integral partitions the <strong>domain</strong> interval $[a, b]$ into subintervals $[x_{i-1}, x_i]$ of width $\Delta x_i$. It evaluates the function at sample points and sums rectangular areas:
+                            </p>
+                            $$ S = \sum_{i=1}^n f(x_i^*) \Delta x_i $$
+                            <p>
+                                <strong>Numerical Approach:</strong> Quadrature rules (Trapezoidal, Simpson's) refine domain subintervals. Highly efficient for continuous and smooth functions but fails when discontinuity sets are dense or have positive measure.
+                            </p>
+                        </div>
+
+                        <div class="p-5 bg-orange-50/50 border border-orange-200 rounded-2xl space-y-3">
+                            <h4 class="font-bold text-terracotta-700">Lebesgue Integration (Range Partitioning)</h4>
+                            <p>
+                                The Lebesgue integral partitions the <strong>range</strong> of function values into measurable subsets $E_i$ and considers the measure of their preimages in the domain, $m(f^{-1}(E_i))$:
+                            </p>
+                            $$ L = \sum_{i} y_i \cdot m\left(x \in [a,b] \mid f(x) \in E_i\right) $$
+                            <p>
+                                <strong>Numerical Approach:</strong> Binning function values in the codomain and computing domain measure (e.g., via Monte Carlo sampling or indicator counting). Robust against highly discontinuous pathological functions.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-amber-800 text-sm">Analysis of Pathological Functions</h4>
+                        <ul class="list-disc list-inside space-y-2 pl-2">
+                            <li>
+                                <strong>Dirichlet Function:</strong> 
+                                $f(x) = 1$ if $x \in \mathbb{Q}$, $0$ if $x \notin \mathbb{Q}$ on $[0,1]$. 
+                                <br><em>Riemann:</em> Upper sums equal 1, lower sums equal 0 for any partition; thus <strong>not Riemann-integrable</strong>.
+                                <br><em>Lebesgue:</em> The preimage of $1$ is $\mathbb{Q} \cap [0,1]$ (measure 0), and the preimage of $0$ is irrational numbers (measure 1). The Lebesgue integral evaluates to $1 \cdot 0 + 0 \cdot 1 = \mathbf{0}$.
+                            </li>
+                            <li>
+                                <strong>Thomae's Function (Popcorn Function):</strong> 
+                                $f(x) = 1/q$ if $x = p/q$ in lowest terms, $0$ if irrational on $[0,1]$.
+                                <br><em>Riemann:</em> Discontinuous at every rational, but the set of discontinuities is countable (measure zero). Therefore, Thomae's function <strong>is Riemann-integrable</strong> with integral equal to $0$.
+                                <br><em>Lebesgue:</em> Yields the identical result ($0$) because rational points form a measure-zero set.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
