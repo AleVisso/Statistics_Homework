@@ -69,6 +69,9 @@
                 <button onclick="switchTab('section2')" id="btn-section2" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
                     2. Normal CDF & Liouville
                 </button>
+                <button onclick="switchTab('section3')" id="btn-section3" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
+                    3. Interactive Laboratory
+                </button>
             </nav>
         </div>
     </header>
@@ -178,8 +181,64 @@
                 </div>
             </div>
         </section>
+
+        <section id="section3" class="tab-content hidden space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    Interactive Numerical Laboratory
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-4">
+                        <h4 class="font-bold text-amber-800 text-sm">1. Riemann vs. Lebesgue Approximator</h4>
+                        <p class="text-xs text-stone-600">Test integration on $f(x) = x^2$ over $[0, 1]$ or $f(x) = \sin(x)$ over $[0, \pi]$.</p>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-stone-700">Select Function:</label>
+                            <select id="labFunc" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl">
+                                <option value="x2">f(x) = x^2 on [0, 1]</option>
+                                <option value="sin">f(x) = sin(x) on [0, pi]</option>
+                                <option value="step">f(x) = 1 if x &lt; 0.5 else 3 on [0, 1]</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-stone-700">Subintervals / Partitions ($n$):</label>
+                            <input type="number" id="labN" value="100" min="10" max="10000" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl font-mono">
+                        </div>
+                        <button onclick="runIntegrationLab()" class="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md transition-all">
+                            Compute Riemann & Lebesgue Estimates
+                        </button>
+                        <div id="integrationResult" class="text-xs font-mono bg-white p-3 rounded-xl border border-amber-200 space-y-1">
+                            Results will appear here.
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-4">
+                        <h4 class="font-bold text-amber-800 text-sm">2. Standard Normal CDF Calculator ($\Phi(x)$)</h4>
+                        <p class="text-xs text-stone-600">Compute $\Phi(x)$ using series expansion vs. reference error function.</p>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-stone-700">Evaluation Point ($x$):</label>
+                            <input type="number" id="labX" value="1.96" step="0.1" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl font-mono">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-stone-700">Series Terms ($N$):</label>
+                            <input type="number" id="labTerms" value="25" min="5" max="100" class="w-full p-2 text-xs text-stone-800 bg-white border border-amber-300 rounded-xl font-mono">
+                        </div>
+                        <button onclick="runCdfLab()" class="w-full py-2 rounded-xl bg-gradient-to-r from-amber-600 to-terracotta-600 hover:from-amber-500 hover:to-terracotta-500 text-white font-bold text-xs shadow-md transition-all">
+                            Compute Normal CDF
+                        </button>
+                        <div id="cdfResult" class="text-xs font-mono bg-white p-3 rounded-xl border border-amber-200 space-y-1">
+                            Results will appear here.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
-     <script>
+
+    <script>
         function switchTab(sectionId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(sectionId).classList.remove('hidden');
@@ -193,6 +252,99 @@
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        </script>
+
+        function runIntegrationLab() {
+            const funcType = document.getElementById('labFunc').value;
+            const n = parseInt(document.getElementById('labN').value) || 100;
+
+            let a = 0, b = 1;
+            let f = (x) => x * x;
+            let exact = 1 / 3;
+
+            if (funcType === 'sin') {
+                a = 0; b = Math.PI;
+                f = (x) => Math.sin(x);
+                exact = 2.0;
+            } else if (funcType === 'step') {
+                a = 0; b = 1;
+                f = (x) => x < 0.5 ? 1 : 3;
+                exact = 2.0;
+            }
+
+            // Riemann approximation (Trapezoidal Rule)
+            let dx = (b - a) / n;
+            let riemannSum = 0.5 * (f(a) + f(b));
+            for (let i = 1; i < n; i++) {
+                riemannSum += f(a + i * dx);
+            }
+            riemannSum *= dx;
+
+            // Lebesgue approximation (Range binning / Histogram measure estimation via Monte Carlo sampling)
+            let samples = 50000;
+            let lebSum = 0;
+            let rangeMin = Infinity, rangeMax = -Infinity;
+            let evalPoints = [];
+            for(let i=0; i<samples; i++) {
+                let x = a + Math.random() * (b - a);
+                let y = f(x);
+                evalPoints.push(y);
+            }
+            let meanVal = evalPoints.reduce((acc, v) => acc + v, 0) / samples;
+            let lebesgueApprox = meanVal * (b - a);
+
+            document.getElementById('integrationResult').innerHTML = `
+                <p><strong>Exact Value:</strong> ${exact.toFixed(5)}</p>
+                <p><strong>Riemann Sum ($n=${n}$):</strong> ${riemannSum.toFixed(5)}</p>
+                <p><strong>Lebesgue Measure Est.:</strong> ${lebesgueApprox.toFixed(5)}</p>
+                <p><strong>Riemann Error:</strong> ${Math.abs(riemannSum - exact).toExponential(3)}</p>
+            `;
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('integrationResult')]);
+            }
+        }
+
+        function erfSeries(x, terms) {
+            let sum = 0;
+            for (let n = 0; n < terms; n++) {
+                let num = Math.pow(-1, n) * Math.pow(x, 2 * n + 1);
+                let fact = 1;
+                for (let i = 1; i <= n; i++) fact *= i;
+                let den = fact * (2 * n + 1);
+                sum += num / den;
+            }
+            return (2 / Math.sqrt(Math.PI)) * sum;
+        }
+
+        function runCdfLab() {
+            const x = parseFloat(document.getElementById('labX').value) || 1.96;
+            const terms = parseInt(document.getElementById('labTerms').value) || 25;
+
+            // Standard normal CDF using error function relation: Phi(x) = 0.5 * (1 + erf(x / sqrt(2)))
+            let z = x / Math.sqrt(2);
+            let approxErf = erfSeries(z, terms);
+            let cdfVal = 0.5 * (1 + approxErf);
+
+            // Reference approximation using Abramowitz & Stegun formula 26.2.17 for verification
+            let t = 1.0 / (1.0 + 0.2316419 * Math.abs(x));
+            let poly = t * (0.31938153 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+            let refCdf = 1.0 - (1.0 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * x * x) * poly;
+            if (x < 0) refCdf = 1.0 - refCdf;
+
+            document.getElementById('cdfResult').innerHTML = `
+                <p><strong>Evaluation Point $x$:</strong> ${x}</p>
+                <p><strong>Series CDF $\Phi(x)$:</strong> ${cdfVal.toFixed(6)}</p>
+                <p><strong>Reference CDF:</strong> ${refCdf.toFixed(6)}</p>
+                <p><strong>Absolute Error:</strong> ${Math.abs(cdfVal - refCdf).toExponential(3)}</p>
+            `;
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('cdfResult')]);
+            }
+        }
+
+        window.onload = function() {
+            runIntegrationLab();
+            runCdfLab();
+        };
+    </script>
 </body>
 </html>
