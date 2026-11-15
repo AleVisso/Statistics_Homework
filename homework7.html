@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework — Statistical Independence & Contingency Table Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warm: {
+                            bg: '#fcf8f2',
+                            card: '#ffffff',
+                            border: '#e7d7c1',
+                            accent: '#b45309',
+                            terracotta: '#c2410c',
+                            amber: '#d97706',
+                            muted: '#78716c'
+                        },
+                        // FIX: the markup uses terracotta-500/600/700, which were not defined before
+                        terracotta: { 500: '#ea580c', 600: '#c2410c', 700: '#9a3412' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background-color: #fcf8f2;
+            color: #292524;
+        }
+        .warm-glow {
+            box-shadow: 0 10px 30px rgba(180, 83, 9, 0.08);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fcf8f2; }
+        ::-webkit-scrollbar-thumb { background: #d7ccc8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bcaaa4; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-white">
+
+    <header class="border-b border-amber-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-amber-700 via-terracotta-600 to-orange-700 bg-clip-text text-transparent">
+                    Statistical Independence & Contingency Analysis
+                </h1>
+            </div>
+
+            <nav class="flex flex-wrap justify-center gap-1.5 bg-amber-100/70 p-1.5 rounded-2xl border border-amber-200">
+                <button onclick="switchTab('section1')" id="btn-section1" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md">
+                    1. Theoretical Foundations
+                </button>
+                <button onclick="switchTab('section2')" id="btn-section2" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
+                    2. Contingency & Chi-Square Engine
+                </button>
+                <button onclick="switchTab('section3')" id="btn-section3" class="tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50">
+                    3. Association vs. Causality
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+
+        <!-- SECTION 1: THEORETICAL FOUNDATIONS -->
+        <section id="section1" class="tab-content space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    Theoretical Concepts of Independence in Probability and Statistics
+                </h3>
+
+                <div class="space-y-4 text-stone-700 text-xs sm:text-sm leading-relaxed">
+                    <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-amber-800 text-sm">1. Probabilistic Independence</h4>
+                        <p>
+                            In probability theory, two discrete random variables $X$ and $Y$ are independent if and only if their joint probability mass function factors into the product of their individual marginal probability mass functions:
+                        </p>
+                        $$ P(X = x_i \text{ and } Y = y_j) = P(X = x_i) \cdot P(Y = y_j) \quad \forall i, j $$
+                        <p>
+                            Equivalently, conditional probabilities remain invariant: $P(Y = y_j \mid X = x_i) = P(Y = y_j)$. Knowledge of one variable provides no predictive information regarding the distribution of the other.
+                        </p>
+                    </div>
+
+                    <div class="p-5 bg-orange-50/50 border border-orange-200 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-terracotta-700">2. Statistical Independence in Sample Datasets</h4>
+                        <p>
+                            In applied statistics, we examine a bivariate sample dataset to test whether categorical attributes exhibit independence. Given observed frequencies $O_{ij}$ in a contingency table with row totals $R_i$ and column totals $C_j$ across total sample size $N$, the <strong>expected frequency</strong> under the null hypothesis of independence ($H_0$) is defined as:
+                        </p>
+                        $$ E_{ij} = \frac{R_i \cdot C_j}{N} $$
+                        <p>
+                            The sample counterparts of the probabilities above are the <strong>marginal relative frequencies</strong> $R_i/N$ and $C_j/N$ and the <strong>conditional relative frequencies</strong> $O_{ij}/R_i$ (that is $P(Y \mid X)$) and $O_{ij}/C_j$ (that is $P(X \mid Y)$). If the variables are independent, every row of the conditional table is close to the marginal distribution of $Y$.
+                        </p>
+                    </div>
+
+                    <div class="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-amber-800 text-sm">3. The Pearson Chi-Square ($\chi^2$) Statistic</h4>
+                        <p>
+                            To measure the divergence between observed and expected frequencies, Karl Pearson formulated the Chi-square statistic:
+                        </p>
+                        $$ \chi^2 = \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{(O_{ij} - E_{ij})^2}{E_{ij}} $$
+                        <p>
+                            Under $H_0$, $\chi^2$ asymptotically follows a Chi-square distribution with degrees of freedom $df = (r - 1)(c - 1)$. Large values of $\chi^2$ lead to the rejection of independence in favor of statistical association. The <strong>p-value</strong> is $P(\chi^2_{df} \ge \chi^2_{obs})$, and the strength of the association can be summarised by Cramér's $V = \sqrt{\chi^2 / (N \cdot \min(r-1, c-1))}$.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
