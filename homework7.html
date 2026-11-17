@@ -77,8 +77,6 @@
     </header>
 
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
-
-        <!-- SECTION 1: THEORETICAL FOUNDATIONS -->
         <section id="section1" class="tab-content space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
                 <h3 class="text-xl font-bold text-amber-900 text-center">
@@ -121,3 +119,60 @@
                 </div>
             </div>
         </section>
+        <section id="section2" class="tab-content hidden space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    Interactive Contingency Table & Chi-Square Analysis Engine
+                </h3>
+
+                <p class="text-xs sm:text-sm text-stone-600 leading-relaxed text-center">
+                    Pick a built-in bivariate dataset, generate a random one, or paste your own raw sample (one observation $(X, F)$ per line, separated by comma, semicolon, tab or space). The engine builds the contingency table for any number of categories and computes marginal and conditional frequencies, expected frequencies under independence, the Pearson Chi-square statistic, the p-value and Cramér's V.
+                </p>
+
+                <div class="bg-amber-50/60 border border-amber-200 p-6 rounded-2xl space-y-4">
+                    <h4 class="font-bold text-amber-800 text-sm text-center">Bivariate Dataset Input $(X, F)$</h4>
+
+                    <textarea id="dataInput" rows="8" spellcheck="false" class="w-full p-2 bg-white border border-amber-300 rounded font-mono text-xs"></textarea>
+
+                    <div class="flex flex-wrap justify-center items-center gap-4 text-xs text-stone-700">
+                        <label class="flex items-center gap-1.5"><input type="checkbox" id="hasHeader" checked> First line is a header</label>
+                        <label class="flex items-center gap-1.5">Built-in dataset:
+                            <select id="datasetSelect" onchange="loadDataset(+this.value); calculateContingency()" class="p-1 bg-white border border-amber-300 rounded text-xs"></select>
+                        </label>
+                        <button onclick="loadRandom(); calculateContingency()" class="px-4 py-1.5 rounded-xl border border-amber-300 bg-white hover:bg-amber-100 font-semibold text-amber-800">Random dataset</button>
+                    </div>
+
+                    <p id="inputMessage" class="text-xs text-center font-semibold"></p>
+
+                    <div class="flex justify-center pt-2">
+                        <button onclick="calculateContingency()" class="px-8 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-terracotta-600 hover:from-amber-500 hover:to-terracotta-500 text-white font-bold text-xs shadow-md transition-all">
+                            Compute Contingency & Chi-Square Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <div id="analysisOutputContainer" class="space-y-6 hidden">
+                    <div id="analysisGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                </div>
+            </div>
+        </section>
+        <script>
+        const ALPHA = 0.05;
+
+        function switchTab(sectionId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 text-stone-700 hover:text-amber-900 hover:bg-amber-200/50";
+            });
+
+            const activeBtn = document.getElementById('btn-' + sectionId);
+            activeBtn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-300 bg-amber-600 text-white shadow-md";
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        </script>
+</main>
+</body>
+</html>
