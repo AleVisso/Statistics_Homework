@@ -211,6 +211,203 @@
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+         const DATASETS = [
+            { name: 'Strong dependence (2×2)', hx: 'Treatment', hf: 'Outcome', rows: ['Drug', 'Placebo'], cols: ['Improved', 'Not improved'], counts: [[45, 15], [20, 40]] },
+            { name: 'Near independence (2×2)', hx: 'Shift', hf: 'Transport', rows: ['Morning', 'Evening'], cols: ['Car', 'Bus'], counts: [[31, 19], [35, 25]] },
+            { name: 'Dependence (3×3)', hx: 'Device', hf: 'AgeGroup', rows: ['Phone', 'Tablet', 'Laptop'], cols: ['Under30', '30to55', 'Over55'], counts: [[40, 25, 10], [20, 30, 15], [10, 20, 30]] }
+        ];
+
+        function fillInput(header, pairs) {
+            for (let i = pairs.length - 1; i > 0; i--) {          // shuffle so the sample looks like raw data
+                const j = Math.floor(Math.random() * (i + 1));
+                [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+            }
+            document.getElementById('dataInput').value = [header, ...pairs.map(p => p.join(','))].join('\n');
+            document.getElementById('hasHeader').checked = true;
+        }
+
+        function loadDataset(idx) {
+            const d = DATASETS[idx], pairs = [];
+            d.counts.forEach((row, i) => row.forEach((n, j) => { for (let k = 0; k < n; k++) pairs.push([d.rows[i], d.cols[j]]); }));
+            fillInput(d.hx + ',' + d.hf, pairs);
+        }
+
+        function loadRandom() {
+            const r = 2 + Math.floor(Math.random() * 3), c = 2 + Math.floor(Math.random() * 3);
+            const n = 150 + Math.floor(Math.random() * 251);
+            const xs = Array.from({ length: r }, (_, i) => 'X' + (i + 1)), fs = Array.from({ length: c }, (_, j) => 'F' + (j + 1));
+            const base = fs.map(() => 0.5 + Math.random()), s = 2 * Math.random();   // s = random strength of dependence
+            const w = xs.map(() => base.map(b => b * (1 + s * (Math.random() - 0.5))));
+            const pairs = [];
+            for (let k = 0; k < n; k++) {
+                const i = Math.floor(Math.random() * r);
+                let t = Math.random() * w[i].reduce((a, b) => a + b, 0), j = 0;
+                while (j < c - 1 && t > w[i][j]) t -= w[i][j++];
+                pairs.push([xs[i], fs[j]]);
+            }
+            fillInput('X,F', pairs);
+        }
+
+        const splitLine = l => (/[,;\t]/.test(l) ? l.split(/[,;\t]/) : l.split(/\s+/)).map(s => s.trim());
+
+        function parseData(text, hasHeader) {
+            const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            let names = ['X', 'F'];
+            if (hasHeader && lines.length) {
+                const h = splitLine(lines.shift());
+                if (h.length === 2 && h[0] && h[1]) names = h;
+            }
+            const pairs = []; let skipped = 0;
+            lines.forEach(l => {
+                const p = splitLine(l);
+                if (p.length === 2 && p[0] && p[1]) pairs.push(p); else skipped++;
+            });
+            return { names, pairs, skipped };
+        }
+
+        const sortCats = a => a.sort((p, q) => (isNaN(p - q) ? p.localeCompare(q) : p - q));
+
+        function lgamma(z) {
+            const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+            let y = z, t = z + 5.5, s = 1.000000000190015;
+            t -= (z + 0.5) * Math.log(t);
+            for (let j = 0; j < 6; j++) s += c[j] / ++y;
+            return -t + Math.log(2.5066282746310005 * s / z);
+        }
+
+        function gammaQ(a, x) {
+            if (x <= 0) return 1;
+            const pre = Math.exp(-x + a * Math.log(x) - lgamma(a));
+            if (x < a + 1) {                       // series for P(a, x)
+                let ap = a, sum = 1 / a, del = sum;
+                for (let n = 0; n < 500 && Math.abs(del) > Math.abs(sum) * 1e-14; n++) { ap++; del *= x / ap; sum += del; }
+                return 1 - sum * pre;
+            }
+            let b = x + 1 - a, c = 1e300, d = 1 / b, h = d;
+            for (let i = 1; i < 500; i++) {
+                const an = -i * (i - a);
+                b += 2;
+                d = an * d + b; if (Math.abs(d) < 1e-300) d = 1e-300;
+                c = b + an / c; if (Math.abs(c) < 1e-300) c = 1e-300;
+                d = 1 / d;
+                const del = d * c; h *= del;
+                if (Math.abs(del - 1) < 1e-14) break;
+            }
+            return pre * h;
+        }
+
+        const pValue = (chi2, df) => Math.min(1, Math.max(0, gammaQ(df / 2, chi2 / 2)));
+
+        const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        const f4 = v => v.toFixed(4);
+        const td = 'p-1.5 border border-amber-200';
+
+        function table(corner, rl, cl, cell, rt, rtLabel, ct, ctLabel, gt) {
+            let h = `<div class="overflow-x-auto"><table class="w-full text-center border-collapse"><thead><tr class="bg-amber-50 text-amber-900"><th class="${td}">${corner}</th>`;
+            h += cl.map(c => `<th class="${td}">${esc(c)}</th>`).join('') + (rt ? `<th class="${td}">${rtLabel}</th>` : '') + '</tr></thead><tbody>';
+            rl.forEach((r, i) => {
+                h += `<tr><td class="${td} font-bold bg-amber-50">${esc(r)}</td>` + cl.map((_, j) => `<td class="${td}">${cell(i, j)}</td>`).join('');
+                h += (rt ? `<td class="${td} font-bold bg-amber-50/60">${rt(i)}</td>` : '') + '</tr>';
+            });
+            if (ct) h += `<tr class="bg-amber-50/60 font-bold"><td class="${td}">${ctLabel}</td>` + cl.map((_, j) => `<td class="${td}">${ct(j)}</td>`).join('') + (rt ? `<td class="${td}">${gt ?? ''}</td>` : '') + '</tr>';
+            return h + '</tbody></table></div>';
+        }
+
+        const card = (title, body, cls = '') =>
+            `<div class="p-5 bg-white border border-amber-200 rounded-2xl space-y-3 ${cls}"><h4 class="font-bold text-amber-800 text-sm">${title}</h4><div class="text-xs font-mono space-y-1.5">${body}</div></div>`;
+
+        function calculateContingency() {
+            const out = document.getElementById('analysisOutputContainer');
+            const msg = document.getElementById('inputMessage');
+            const fail = t => { msg.className = 'text-xs text-center font-semibold text-terracotta-600'; msg.textContent = t; out.classList.add('hidden'); };
+
+            const { names, pairs, skipped } = parseData(document.getElementById('dataInput').value, document.getElementById('hasHeader').checked);
+            if (pairs.length < 2) return fail('Enter at least two valid observations, one "X,F" pair per line.');
+            const xs = sortCats([...new Set(pairs.map(p => p[0]))]);
+            const fs = sortCats([...new Set(pairs.map(p => p[1]))]);
+            const r = xs.length, c = fs.length;
+            if (r < 2 || c < 2) return fail(`Both variables need at least 2 distinct categories (found ${r} for ${names[0]}, ${c} for ${names[1]}).`);
+            msg.className = 'text-xs text-center font-semibold text-stone-500';
+            msg.textContent = `${pairs.length} observations read` + (skipped ? `, ${skipped} invalid line(s) skipped` : '') + '.';
+
+            const xi = new Map(xs.map((v, i) => [v, i])), fi = new Map(fs.map((v, i) => [v, i]));
+            const O = xs.map(() => fs.map(() => 0));
+            pairs.forEach(([x, f]) => O[xi.get(x)][fi.get(f)]++);
+
+            const R = O.map(row => row.reduce((a, b) => a + b, 0));
+            const C = fs.map((_, j) => O.reduce((a, row) => a + row[j], 0));
+            const N = pairs.length;
+
+            const E = O.map((row, i) => row.map((_, j) => R[i] * C[j] / N));
+            let chi2 = 0, lowE = 0, best = { z: 0, i: 0, j: 0 };
+            O.forEach((row, i) => row.forEach((o, j) => {
+                chi2 += (o - E[i][j]) ** 2 / E[i][j];
+                if (E[i][j] < 5) lowE++;
+                const z = (o - E[i][j]) / Math.sqrt(E[i][j] * (1 - R[i] / N) * (1 - C[j] / N));  // adjusted residual
+                if (Math.abs(z) > Math.abs(best.z)) best = { z, i, j };
+            }));
+            const df = (r - 1) * (c - 1);
+            const p = pValue(chi2, df);
+            const m = Math.min(r - 1, c - 1);
+            const V = Math.sqrt(chi2 / (N * m));
+            const k = Math.sqrt(m); 
+            const strength = V < 0.1 / k ? 'negligible' : V < 0.3 / k ? 'small' : V < 0.5 / k ? 'medium' : 'large';
+            const dependent = p < ALPHA;
+            const pTxt = p < 1e-4 ? p.toExponential(3) : p.toFixed(4);
+            const [nx, nf] = names.map(esc);
+
+            const cards = [
+                card('Contingency Table of Observed Frequencies ($O_{ij}$)',
+                    table(`${nx} \\ ${nf}`, xs, fs, (i, j) => O[i][j], i => R[i], 'Total', j => C[j], 'Total', N)),
+                card('Marginal Frequencies',
+                    table(nx, xs, ['n', 'n / N'], (i, j) => j ? f4(R[i] / N) : R[i]) +
+                    table(nf, fs, ['n', 'n / N'], (i, j) => j ? f4(C[i] / N) : C[i])),
+                card(`Conditional Frequencies $P(${nf} \\mid ${nx})$ (row profiles)`,
+                    table(`${nx} \\ ${nf}`, xs, fs, (i, j) => f4(O[i][j] / R[i]), () => '1.0000', 'Σ', j => f4(C[j] / N), 'Marginal $P(F)$')),
+                card(`Conditional Frequencies $P(${nx} \\mid ${nf})$ (column profiles)`,
+                    table(`${nx} \\ ${nf}`, xs, fs, (i, j) => f4(O[i][j] / C[j]), i => f4(R[i] / N), 'Marginal $P(X)$', () => '1.0000', 'Σ')),
+                card('Expected Frequencies ($E_{ij}$)',
+                    table(`${nx} \\ ${nf}`, xs, fs, (i, j) => E[i][j].toFixed(2), i => R[i], 'Total', j => C[j], 'Total', N)),
+                card('Statistical Metrics & Test Conclusion', `
+                    <p><strong>Total Sample Size (N):</strong> ${N}</p>
+                    <p><strong>Table size:</strong> ${r} × ${c}</p>
+                    <p><strong>Chi-Square Statistic ($\\chi^2$):</strong> ${chi2.toFixed(4)}</p>
+                    <p><strong>Degrees of Freedom ($df$):</strong> (${r}-1)(${c}-1) = ${df}</p>
+                    <p><strong>p-value:</strong> ${pTxt}</p>
+                    <p><strong>Cramér's $V$:</strong> ${V.toFixed(4)} (${strength})</p>
+                    <p><strong>Conclusion ($\\alpha = ${ALPHA}$):</strong> ${dependent
+                        ? '<span class="text-terracotta-700 font-bold">Reject $H_0$ (Variables are statistically dependent / associated)</span>'
+                        : '<span class="text-amber-700 font-bold">Fail to reject $H_0$ (No evidence against independence)</span>'}</p>`)
+            ];
+
+            const bx = esc(xs[best.i]), bf = esc(fs[best.j]);
+            const cond = O[best.i][best.j] / R[best.i], marg = C[best.j] / N;
+            const interp = `
+                <p class="font-sans text-xs sm:text-sm leading-relaxed text-stone-700">
+                    <strong>Decision.</strong> With $\\chi^2 = ${chi2.toFixed(2)}$, $df = ${df}$ and p-value $= ${pTxt}$, ${dependent
+                        ? `which is below $\\alpha = ${ALPHA}$, we reject $H_0$: the data are not compatible with independence, so ${nx} and ${nf} are <strong>statistically dependent</strong>.`
+                        : `which is not below $\\alpha = ${ALPHA}$, we fail to reject $H_0$: the data show no significant departure from independence. This does not prove independence; it only means the sample provides no sufficient evidence against it.`}
+                    <br><strong>Strength.</strong> Cramér's $V = ${V.toFixed(3)}$ indicates a <strong>${strength}</strong> association${dependent ? '' : ' (any association in the sample is compatible with sampling noise)'}.
+                    <br><strong>Where the departure comes from.</strong> The largest deviation is the cell (${bx}, ${bf}): observed ${O[best.i][best.j]} versus ${E[best.i][best.j].toFixed(2)} expected under independence (adjusted residual $${best.z.toFixed(2)}$). Equivalently, $P(${nf} = ${bf} \\mid ${nx} = ${bx}) = ${f4(cond)}$ whereas the marginal $P(${nf} = ${bf}) = ${f4(marg)}$; under independence these two values would coincide.
+                    ${lowE ? `<br><strong>Caution.</strong> ${lowE} of ${r * c} cells have an expected frequency below 5, so the $\\chi^2$ approximation may be unreliable (consider merging categories or an exact test).` : ''}
+                    <br><strong>Association is not causation.</strong> ${dependent
+                        ? 'This result only shows that knowing one variable changes the distribution of the other; it does not tell us whether $X$ causes $F$, $F$ causes $X$, or a confounder drives both (see Section 3).'
+                        : 'Even a significant result would only establish association, never a causal link (see Section 3).'}
+                </p>`;
+            cards.push(card('Interpretation of the Results', interp, 'md:col-span-2'));
+
+            document.getElementById('analysisGrid').innerHTML = cards.join('');
+            out.classList.remove('hidden');
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([out]);
+            }
+        }
+
+        window.onload = function() {
+            document.getElementById('datasetSelect').innerHTML = DATASETS.map((d, i) => `<option value="${i}">${d.name}</option>`).join('');
+            loadDataset(0);
+            calculateContingency();
+        };
         </script>
 </body>
 </html>
