@@ -77,6 +77,8 @@
     </header>
 
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+
+        <!-- SECTION 1: THEORETICAL FOUNDATIONS -->
         <section id="section1" class="tab-content space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
                 <h3 class="text-xl font-bold text-amber-900 text-center">
@@ -119,6 +121,7 @@
                 </div>
             </div>
         </section>
+         <!-- SECTION 2: CONTINGENCY & CHI-SQUARE ENGINE -->
         <section id="section2" class="tab-content hidden space-y-8">
             <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
                 <h3 class="text-xl font-bold text-amber-900 text-center">
@@ -156,6 +159,42 @@
                 </div>
             </div>
         </section>
+        <section id="section3" class="tab-content hidden space-y-8">
+            <div class="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 warm-glow shadow-sm max-w-5xl mx-auto space-y-6">
+                <h3 class="text-xl font-bold text-amber-900 text-center">
+                    Discussion: Statistical Association versus Causality
+                </h3>
+
+                <div class="space-y-4 text-stone-700 text-xs sm:text-sm leading-relaxed">
+                    <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-amber-800 text-sm">1. Interpreting Dependency Results</h4>
+                        <p>
+                            When a Chi-square test rejects the null hypothesis of independence ($p &lt; \alpha$ or large $\chi^2$), we conclude that variables $X$ and $Y$ are <strong>statistically associated</strong> or dependent. This implies that knowing the outcome of $X$ alters the conditional probability distribution of $Y$.
+                        </p>
+                    </div>
+
+                    <div class="p-5 bg-orange-50/50 border border-orange-200 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-terracotta-700">2. The Fallacy of "Correlation Implies Causation"</h4>
+                        <p>
+                            Statistical association established through contingency tables or correlation coefficients never inherently proves causal direction. A significant association can stem from three primary alternative mechanisms:
+                        </p>
+                        <ul class="list-disc list-inside space-y-1.5 pl-2">
+                            <li><strong>Direct Causation:</strong> Variable $X$ directly causes changes in $Y$.</li>
+                            <li><strong>Reverse Causation:</strong> Variable $Y$ actually influences $X$.</li>
+                            <li><strong>Confounding Variables (Spurious Association):</strong> A hidden third factor $Z$ simultaneously drives both $X$ and $Y$, creating a statistical link without direct causal effect between them.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-2">
+                        <h4 class="font-bold text-amber-800 text-sm">3. Methodological Rigor</h4>
+                        <p>
+                            Establishing causality requires rigorous experimental design (e.g., randomized controlled trials), causal inference frameworks, or temporal precedence verification. Contingency table analysis remains strictly a tool for detecting distributional association.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
         <script>
         const ALPHA = 0.05;
 
@@ -173,6 +212,5 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         </script>
-</main>
 </body>
 </html>
