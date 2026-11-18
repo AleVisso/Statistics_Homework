@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Decentralized Ledger — Blockchain, PoW and Mining Statistics</title>
+
+  <style>
+    :root {
+      --bg: #eef1ec;
+      --card: #fbfcfa;
+      --border: #c9d3c8;
+      --ink: #1d3b34;
+      --muted: #5d6f68;
+      --accent: #b7791f;
+      --ok: #2f7d4f;
+      --bad: #b3342b;
+      --warn: #8a5a00;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: #22302c;
+      font: 14px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    header {
+      background: var(--ink);
+      color: #f3f6f1;
+      padding: 14px 22px 0;
+    }
+
+    h1 { margin: 0; font: 700 22px/1.2 Georgia, serif; }
+
+    header p { margin: 3px 0 10px; color: #b8cbc2; font-size: 12.5px; }
+
+    h2 { margin: 0 0 4px; font: 700 19px Georgia, serif; color: var(--ink); }
+    h3 { margin: 0 0 8px; font: 700 14px system-ui; color: var(--ink); }
+
+    main { max-width: 1060px; margin: 0 auto; padding: 22px 16px 50px; }
+
+    .banner {
+      padding: 10px 16px;
+      font: 600 13px system-ui;
+      color: #fff;
+    }
+    .banner.err { background: var(--bad); }
+    .banner.warn { background: var(--warn); }
+
+    nav { display: flex; flex-wrap: wrap; gap: 2px; }
+
+    nav button {
+      border: 0;
+      background: transparent;
+      color: #b8cbc2;
+      padding: 9px 16px;
+      font: 600 13px system-ui;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+    }
+
+    nav button.on { background: var(--bg); color: var(--ink); }
+
+    section { display: none; }
+    section.on { display: block; }
+
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .lead { margin: 0 0 16px; max-width: 76ch; color: var(--muted); }
+
+    .grid { display: grid; grid-template-columns: 300px 1fr; gap: 16px; }
+
+    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+
+    label { display: block; margin: 8px 0 3px; font-size: 12px; font-weight: 600; }
+
+    input, select {
+      width: 100%;
+      padding: 7px 9px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: #fff;
+      font: inherit;
+    }
+
+    button.b {
+      width: 100%;
+      margin-top: 8px;
+      padding: 9px 14px;
+      border: 0;
+      border-radius: 5px;
+      background: var(--ink);
+      color: #fff;
+      font: 600 13px system-ui;
+      cursor: pointer;
+    }
+
+    button.b:hover { background: #2b5249; }
+    button.b:disabled { opacity: .5; cursor: wait; }
+
+    button.b.alt { background: #fff; color: var(--ink); border: 1px solid var(--ink); }
+
+    .mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+    .mu { color: var(--muted); font-size: 12px; }
+
+    .formula {
+      margin: 8px 0;
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font: italic 14px Georgia, serif;
+    }
+
+    .blk {
+      margin-bottom: 10px;
+      padding: 9px 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--ok);
+      border-radius: 5px;
+    }
+
+    .blk.bad { border-left-color: var(--bad); background: #fdf3f2; }
+
+    .blk .h { display: flex; justify-content: space-between; font-weight: 700; }
+    .blk div { word-break: break-all; }
+    .blk input { padding: 3px 6px; font-size: 12px; }
+
+    .tag { font-size: 11px; font-weight: 700; color: var(--ok); }
+    .bad .tag { color: var(--bad); }
+
+    #log { max-height: 90px; overflow: auto; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+
+    th, td {
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      text-align: right;
+    }
+
+    th { background: #e3e9e2; text-align: center; }
+    th:first-child, td:first-child { text-align: left; }
+
+    canvas {
+      width: 100%;
+      height: 210px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+    }
+
+    .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+
+    .kpi div {
+      padding: 8px 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+    }
+
+    .kpi b { display: block; font: 700 16px ui-monospace, Menlo, monospace; color: var(--ink); }
+    .kpi span { font-size: 11.5px; color: var(--muted); }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>The Decentralized Ledger</h1>
+    <p>Blockchain, Proof-of-Work and mining statistics — an educational simulator that runs entirely in the browser</p>
+
+    <nav id="nav">
+      <button class="on" data-t="s1">1 · Blockchain &amp; network</button>
+      <button data-t="s2">2 · Crypto lab</button>
+      <button data-t="s3">3 · Mining statistics</button>
+      <button data-t="s4">4 · Security &amp; double-spend</button>
+    </nav>
+  </header>
+
+  <main>
+
+    <section id="s1" class="on">
+      <h2>Distributed ledger with Proof-of-Work</h2>
+      <p class="lead">
+        Add transactions and mine a block, then open this same page in a second tab: blocks propagate through
+        <code>BroadcastChannel</code> and every node validates them before accepting. Edit the text of an already
+        mined block to watch the chain break.
+      </p>
+
+      <div class="grid">
+        <div>
+          <div class="card">
+            <h3>Node <span id="nid" class="mono"></span></h3>
+
+            <label for="tx">New transaction</label>
+            <input id="tx" value="Alice pays Bob 15 coins">
+            <button class="b alt" id="addtx">Add to pool</button>
+
+            <div id="pool" class="mu" style="margin-top:8px"></div>
+
+            <label for="diff">Difficulty (leading hex zeros)</label>
+            <select id="diff">
+              <option value="1">1 — about 16 attempts</option>
+              <option value="2" selected>2 — about 256 attempts</option>
+              <option value="3">3 — about 4,096 attempts</option>
+              <option value="4">4 — about 65,536 attempts</option>
+            </select>
+
+            <button class="b" id="mine">Mine block</button>
+            <div id="mstat" class="mu mono" style="margin-top:6px"></div>
+          </div>
+
+          <div class="card">
+            <h3>Simulated network</h3>
+            <div id="log" class="mu mono">Waiting for peers…</div>
+            <button class="b alt" id="sync">Sync from peers</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div style="display:flex; justify-content:space-between">
+              <h3>Local chain</h3>
+              <span id="chk" class="tag"></span>
+            </div>
+            <div id="chain"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="s2">
+      <h2>Native SHA-256 vs. simplified hash</h2>
+      <p class="lead">
+        The native <code>crypto.subtle.digest</code> API is compared with an additive checksum (the sum of character
+        codes). The defaults are two texts with swapped digits: identical for the checksum, different for SHA-256.
+      </p>
+
+      <div class="card">
+        <div class="grid" style="grid-template-columns: 1fr 1fr">
+          <div>
+            <label for="ta">Text A</label>
+            <input id="ta" value="Alice pays Bob 15">
+          </div>
+          <div>
+            <label for="tb">Text B</label>
+            <input id="tb" value="Alice pays Bob 51">
+          </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns: 200px 1fr; margin-top:10px">
+          <button class="b" id="cmp">Compare</button>
+          <button class="b alt" id="bench">Benchmark speed (20,000 hashes)</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <table id="ctab"></table>
+        <p id="cnote" class="mu"></p>
+      </div>
+    </section>
+
+    <section id="s3">
+      <h2>Mining times vs. probabilistic models</h2>
+      <p class="lead">
+        Each experiment performs <i>M</i> real nonce searches with SHA-256 on random inputs. With difficulty <i>d</i>
+        the success probability per attempt is <i>p</i> = 16<sup>−d</sup>: the number of attempts is Geometric and
+        the waiting time is approximately Exponential.
+      </p>
+
+      <div class="card">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 200px; align-items: end">
+          <div>
+            <label for="sd">Difficulty d</label>
+            <select id="sd">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div>
+            <label for="sm">Trials M (10–500)</label>
+            <input id="sm" type="number" value="150" min="10" max="500">
+          </div>
+          <button class="b" id="run">Run experiment</button>
+        </div>
+        <div id="sprog" class="mu mono"></div>
+        <p class="mu" style="margin:6px 0 0">
+          Note: d = 3 with a large M may take from 1 to 5 minutes depending on the PC, since every attempt is a real asynchronous SHA-256 call.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Histogram of attempts (bars) and theoretical geometric (line)</h3>
+        <canvas id="hist"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>Cumulative results</h3>
+        <table id="stab">
+          <tr>
+            <th>d</th>
+            <th>M</th>
+            <th>Mean</th>
+            <th>1/p</th>
+            <th>95% CI of mean</th>
+            <th>Variance</th>
+            <th>(1−p)/p²</th>
+            <th>CV</th>
+            <th>KS D</th>
+            <th>5% threshold</th>
+            <th>H/s</th>
+          </tr>
+        </table>
+        <p class="mu">
+          CV = standard deviation / mean: for a geometric variable with small p it is about 1 (like the exponential).
+          KS D is the maximum distance between the empirical CDF and the theoretical CDF 1−(1−p)<sup>n</sup>; since
+          the variable is discrete, the test is conservative.
+        </p>
+      </div>
+    </section>
+
+    <section id="s4">
+      <h2>Probability of rewriting already accepted blocks</h2>
+      <p class="lead">
+        An attacker with hash-power share <i>q</i> tries to recover a deficit of <i>z</i> confirmations. Three
+        estimates are compared: Nakamoto's Poisson approximation, the exact formula (negative binomial, Rosenfeld)
+        and a Monte Carlo simulation.
+      </p>
+
+      <div class="formula">
+        P(success) = 1 − Σ<sub>k=0..z</sub> Poisson(k; λ) · [1 − (q/p)<sup>z−k</sup>],
+        &nbsp; λ = z·q/p, &nbsp; p = 1 − q
+      </div>
+
+      <div class="card">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 200px; align-items: end">
+          <div>
+            <label for="q">Attacker share q (0–0.49)</label>
+            <input id="q" type="number" value="0.10" step="0.01" min="0.01" max="0.49">
+          </div>
+          <div>
+            <label for="z">Confirmations z (0–50)</label>
+            <input id="z" type="number" value="6" min="0" max="50">
+          </div>
+          <button class="b" id="calc">Calculate</button>
+        </div>
+
+        <div class="kpi" style="margin-top:12px">
+          <div><b id="rN">—</b><span>Nakamoto (Poisson)</span></div>
+          <div><b id="rE">—</b><span>Exact (negative binomial)</span></div>
+          <div><b id="rM">—</b><span>Monte Carlo (20,000 runs)</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <label for="mod">Risk table, model:</label>
+        <select id="mod" style="max-width:320px">
+          <option value="e">Exact</option>
+          <option value="n">Nakamoto (Poisson)</option>
+        </select>
+
+        <div style="overflow-x:auto; margin-top:8px">
+          <table id="dtab"></table>
+        </div>
+        <p class="mu">
+          Last column: minimum confirmations for a risk below 0.1%. For q ≥ 0.5 the probability is 1 for any z.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Where the model stops holding</h3>
+        <p class="mu" style="margin:0">
+          The estimates assume constant hash rates, exponential block times, zero network latency, no difficulty
+          adjustment, and an attacker who mines privately starting from a deficit of z rather than from an advantage.
+          With latency or frequent forks the attacker starts ahead and more confirmations are needed. The gap between
+          the Nakamoto and exact columns already shows how much the result depends on the chosen approximation.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const enc = new TextEncoder();
+    const yieldUI = () => new Promise(resolve => setTimeout(resolve));
+
+    function escHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+    if (typeof crypto === 'undefined' || !crypto.subtle) {
+      document.body.insertAdjacentHTML('afterbegin',
+        '<div class="banner err">⚠️ <code>crypto.subtle</code> is not available. ' +
+        'Open this file via HTTPS or localhost (e.g. run <code>python3 -m http.server</code> ' +
+        'in this folder, then open <code>http://localhost:8000/decentralized_ledger.html</code>).</div>');
+      throw new Error('Secure context required for crypto.subtle');
+    }
+    if (typeof BroadcastChannel === 'undefined') {
+      document.body.insertAdjacentHTML('afterbegin',
+        '<div class="banner warn">⚠️ <code>BroadcastChannel</code> is not available. ' +
+        'Mining will work, but blocks will not propagate to other tabs.</div>');
+    }
+
+    async function sha(text) {
+      const buffer = await crypto.subtle.digest('SHA-256', enc.encode(text));
+      return [...new Uint8Array(buffer)]
+        .map(byte => byte.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    function simple(text) {
+      let total = 0;
+      for (const byte of enc.encode(text)) {
+        total = (total + byte) >>> 0;
+      }
+      return total.toString(16).padStart(8, '0');
+    }
+
+    function bitDiff(a, b) {
+      let differing = 0;
+      for (let i = 0; i < a.length; i++) {
+        const xor = parseInt(a[i], 16) ^ parseInt(b[i], 16);
+        differing += xor.toString(2).split('1').length - 1;
+      }
+      return differing / (a.length * 4);
+    }
+
+    document.querySelectorAll('#nav button').forEach(button => {
+      button.onclick = () => {
+        document.querySelectorAll('#nav button, section').forEach(el => el.classList.remove('on'));
+        button.classList.add('on');
+        $(button.dataset.t).classList.add('on');
+      };
+    });
+
+
+    let chain = [];
+    let pending = [];
+    let mining = false;
+    let okMap = [];
+
+    const nodeId = Math.random().toString(36).slice(2, 6);
+    $('nid').textContent = '#' + nodeId;
+
+    const channel = typeof BroadcastChannel !== 'undefined'
+      ? new BroadcastChannel('ledger_p2')
+      : { postMessage() {}, set onmessage(_) {} };
+
+    function payload(b) {
+      return `${b.index}|${b.timestamp}|${JSON.stringify(b.transactions)}|${b.previousHash}|${b.nonce}|${b.difficulty}`;
+    }
+
+    function log(message) {
+      const el = $('log');
+      const old = el.innerHTML.includes('Waiting for peers') ? '' : el.innerHTML;
+      el.innerHTML = `${new Date().toLocaleTimeString()} ${escHtml(message)}<br>` + old;
+    }
+
+    async function validate(blocks) {
+      const recomputed = [];
+      for (const b of blocks) {
+        recomputed.push(await sha(payload(b)));
+      }
+
+      let broken = false;
+      return blocks.map((b, i) => {
+        const shapeOk = Number.isInteger(b.difficulty) && b.difficulty >= (i ? 1 : 0) && b.difficulty <= 64
+                     && Number.isInteger(b.nonce) && Array.isArray(b.transactions)
+                     && typeof b.hash === 'string' && typeof b.previousHash === 'string';
+        const hashOk  = recomputed[i] === b.hash;
+        const powOk   = shapeOk && b.hash.startsWith('0'.repeat(b.difficulty));
+        const linkOk  = i
+          ? b.previousHash === recomputed[i - 1]
+          : b.previousHash === '0'.repeat(64);
+        const indexOk = b.index === i;
+
+        if (!(shapeOk && hashOk && powOk && linkOk && indexOk)) {
+          broken = true;
+        }
+        return !broken;
+      });
+    }
+
+    function prunePool(blocks) {
+      const included = new Set();
+      for (const b of blocks) for (const tx of b.transactions) included.add(tx);
+      const before = pending.length;
+      pending = pending.filter(tx => !included.has(tx));
+      if (pending.length !== before) renderPool();
+    }
+
+    async function render() {
+      const snapshot = chain;
+      const freshOk = await validate(snapshot);
+      if (chain !== snapshot) return;
+      okMap = freshOk;
+
+      const allValid = okMap.every(Boolean);
+
+      $('chk').textContent = allValid
+        ? `✔ Valid chain · height ${chain.length}`
+        : '✖ Invalid chain: everything from the first red block onwards must be redone';
+      $('chk').style.color = allValid ? 'var(--ok)' : 'var(--bad)';
+
+      $('chain').innerHTML = chain.map((b, i) => {
+        const txField = b.index
+          ? `<input data-i="${i}" aria-label="Transactions of block ${i}"
+                    value="${escHtml(b.transactions.join(' ; '))}">`
+          : escHtml(b.transactions[0]);
+
+        return `
+          <div class="blk ${okMap[i] ? '' : 'bad'}">
+            <div class="h">
+              <span>Block #${b.index}</span>
+              <span class="tag">${okMap[i] ? 'valid' : 'invalid'}</span>
+            </div>
+            <div class="mu">
+              ${b.index ? new Date(b.timestamp).toLocaleTimeString() : 'genesis'}
+              · difficulty ${b.difficulty} · nonce ${b.nonce}
+            </div>
+            <div class="mono">Txs: ${txField}</div>
+            <div class="mono mu">Prev: ${b.previousHash}</div>
+            <div class="mono">Hash: ${b.hash}</div>
+          </div>`;
+      }).join('');
+
+      document.querySelectorAll('#chain input').forEach(input => {
+        input.onchange = () => {
+          chain[+input.dataset.i].transactions = input.value.split(' ; ');
+          render();
+        };
+      });
+    }
+
+    function renderPool() {
+      $('pool').innerHTML = pending.length
+        ? pending.map(t => '• ' + escHtml(t)).join('<br>')
+        : 'Pool is empty.';
+    }
+
+    $('addtx').onclick = () => {
+      const value = $('tx').value.trim();
+      if (value) {
+        pending.push(value);
+        $('tx').value = '';
+        renderPool();
+      }
+    };
+
+    $('mine').onclick = async () => {
+      if (mining) return;
+      if (!pending.length) {
+        $('mstat').textContent = 'The pool is empty: add a transaction first.';
+        return;
+      }
+
+      mining = true;
+      $('mine').disabled = true;
+
+      const difficulty = +$('diff').value;
+      const prefix = '0'.repeat(difficulty);
+      const height = chain.length;
+      const txCount = pending.length;  
+
+      const block = {
+        index: height,
+        timestamp: Date.now(),
+        transactions: pending.slice(0, txCount),
+        previousHash: chain[height - 1].hash,
+        nonce: 0,
+        difficulty: difficulty
+      };
+
+      const start = performance.now();
+      let hash;
+
+      const cancel = reason => {
+        mining = false;
+        $('mine').disabled = false;
+        $('mstat').textContent = reason;
+      };
+
+      while (true) {
+        if (chain.length !== height) {
+          cancel('Mining cancelled: a peer found the block first.');
+          return;
+        }
+
+        hash = await sha(payload(block));
+        if (hash.startsWith(prefix)) break;
+        block.nonce++;
+
+        if (block.nonce % 1500 === 0) {
+          const elapsed = (performance.now() - start) / 1000;
+          $('mstat').textContent = `nonce ${block.nonce} · ${Math.round(block.nonce / elapsed)} H/s`;
+          await yieldUI();
+          if (chain.length !== height) {
+            cancel('Mining cancelled: a peer found the block first.');
+            return;
+          }
+        }
+      }
+
+      if (chain.length !== height) {
+        cancel('Mining cancelled: a peer found the block first.');
+        return;
+      }
+
+      block.hash = hash;
+      chain.push(block);
+      pending = pending.slice(txCount);
+      renderPool();
+
+      const seconds = (performance.now() - start) / 1000;
+      $('mstat').textContent = `Block #${height} found in ${seconds.toFixed(2)} s with ${block.nonce + 1} attempts`;
+
+      channel.postMessage({ t: 'BLOCK', b: block });
+
+      mining = false;
+      $('mine').disabled = false;
+      render();
+    };
+
+    channel.onmessage = async event => {
+      const msg = event.data;
+
+      if (msg.t === 'ASK') {
+        channel.postMessage({ t: 'CHAIN', c: chain });
+      }
+
+      else if (msg.t === 'BLOCK') {
+        const block = msg.b;
+        const last = chain[chain.length - 1];
+        const extendsChain = block.index === chain.length && block.previousHash === last.hash;
+
+        if (extendsChain) {
+          const valid = (await validate([...chain, block])).every(Boolean);
+          const lastNow = chain[chain.length - 1];
+          if (valid && block.index === chain.length && block.previousHash === lastNow.hash) {
+            chain.push(block);
+            prunePool([block]);
+            log(`Block #${block.index} received and validated`);
+            render();
+          } else if (block.index >= chain.length) {
+            log('Block cannot be linked: asking peers for their chain');
+            channel.postMessage({ t: 'ASK' });
+          }
+        } else if (block.index >= chain.length) {
+          log('Block cannot be linked: asking peers for their chain');
+          channel.postMessage({ t: 'ASK' });
+        }
+      }
+
+      else if (msg.t === 'CHAIN') {
+        const candidate = msg.c;
+        const longerOrRepair = candidate.length > chain.length || !okMap.every(Boolean);
+        const notShorter = candidate.length >= chain.length;
+        if (!(longerOrRepair && notShorter)) return;
+
+        const valid = (await validate(candidate)).every(Boolean);
+        if (!valid) return;
+
+        const nowLongerOrRepair = candidate.length > chain.length || !okMap.every(Boolean);
+        const nowNotShorter = candidate.length >= chain.length;
+        if (!(nowLongerOrRepair && nowNotShorter)) return;
+
+        chain = candidate;
+        prunePool(candidate);
+        log(`Chain adopted (height ${chain.length})`);
+        render();
+      }
+    };
+
+    $('sync').onclick = () => {
+      log('Sync requested');
+      channel.postMessage({ t: 'ASK' });
+    };
+
+    (async () => {
+      const genesis = {
+        index: 0,
+        timestamp: 0,
+        transactions: ['Genesis Block'],
+        previousHash: '0'.repeat(64),
+        nonce: 0,
+        difficulty: 0
+      };
+      genesis.hash = await sha(payload(genesis));
+
+      chain = [genesis];
+      renderPool();
+      await render();
+      channel.postMessage({ t: 'ASK' });
+    })();
+
+
+    $('cmp').onclick = async () => {
+      const a = $('ta').value;
+      const b = $('tb').value;
+
+      const shaA = await sha(a);
+      const shaB = await sha(b);
+      const sumA = simple(a);
+      const sumB = simple(b);
+
+      $('ctab').innerHTML = `
+        <tr>
+          <th>Function</th><th>Hash of A</th><th>Hash of B</th><th>Bits changed</th>
+        </tr>
+        <tr>
+          <td>SHA-256 (native)</td>
+          <td class="mono" style="word-break:break-all">${shaA}</td>
+          <td class="mono" style="word-break:break-all">${shaB}</td>
+          <td>${(bitDiff(shaA, shaB) * 100).toFixed(1)}%</td>
+        </tr>
+        <tr>
+          <td>Additive checksum</td>
+          <td class="mono">${sumA}</td>
+          <td class="mono">${sumB}</td>
+          <td>${(bitDiff(sumA, sumB) * 100).toFixed(1)}%</td>
+        </tr>`;
+
+      $('cnote').textContent = (sumA === sumB && a !== b)
+        ? 'Collision: different texts, same checksum. SHA-256 flips about half of the bits (avalanche effect).'
+        : 'A good hash flips about 50% of the bits even for a minimal change.';
+    };
+
+    $('bench').onclick = async () => {
+      const btn = $('bench');
+      if (btn.disabled) return;
+      const oldLabel = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Running 20,000 hashes…';
+      $('cnote').textContent = 'Benchmark running…';
+      await yieldUI();
+
+      try {
+        const N = 20000;
+
+        let t = performance.now();
+        for (let i = 0; i < N; i++) simple('block' + i);
+        const simpleMs = performance.now() - t;
+
+        t = performance.now();
+        for (let i = 0; i < N; i++) await sha('block' + i);
+        const shaMs = performance.now() - t;
+
+        $('cnote').textContent =
+          `${N} hashes — checksum: ${simpleMs.toFixed(1)} ms · native SHA-256 (async): ${shaMs.toFixed(0)} ms ` +
+          `(${Math.round(N / (shaMs / 1000))} H/s). The cost per hash is what turns mining into measurable work.`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = oldLabel;
+      }
+    };
+
+    $('cmp').click();
+
+
+    function drawHist(attempts, p) {
+      const canvas = $('hist');
+      const W = canvas.width = canvas.clientWidth * 2;
+      const H = canvas.height = 420;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, W, H);
+
+      const M = attempts.length;
+      const top = Math.min(Math.max(...attempts), Math.ceil(5 / p));
+      const bins = 20;
+      const width = top / bins;
+
+      const observed = Array(bins).fill(0);
+      attempts.forEach(n => {
+        observed[Math.min(bins - 1, Math.floor((n - 1) / width))]++;
+      });
+
+      const cdf = n => 1 - Math.pow(1 - p, n);
+      const expected = observed.map((_, i) => M * (cdf((i + 1) * width) - cdf(i * width)));
+
+      const maxY = Math.max(...observed, ...expected) * 1.1;
+      const barW = (W - 60) / bins;
+      const plotH = H - 50;
+
+      ctx.fillStyle = '#8fb3a4';
+      observed.forEach((v, i) => {
+        const h = v / maxY * plotH;
+        ctx.fillRect(40 + i * barW + 2, H - 30 - h, barW - 4, h);
+      });
+
+      ctx.strokeStyle = '#b7791f';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      expected.forEach((v, i) => {
+        const x = 40 + i * barW + barW / 2;
+        const y = H - 30 - v / maxY * plotH;
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      });
+      ctx.stroke();
+
+      ctx.fillStyle = '#5d6f68';
+      ctx.font = '22px sans-serif';
+      ctx.fillText('0', 40, H - 8);
+      ctx.fillText(Math.round(top) + ' attempts', W - 190, H - 8);
+      ctx.fillText('frequency', 6, 20);
+    }
+
+    $('run').onclick = async () => {
+      if ($('run').disabled) return;
+
+      const d = +$('sd').value;
+      const M = Math.max(10, Math.min(500, +$('sm').value || 150));
+      const p = Math.pow(16, -d);
+      const prefix = '0'.repeat(d);
+
+      if (d === 3 && M > 200) {
+        const ok = confirm(
+          `d = 3 with M = ${M} requires about ${(M * 4096).toLocaleString()} hashes ` +
+          `and may take from 1 to 5 minutes depending on the PC. Continue?`
+        );
+        if (!ok) return;
+      }
+
+      const attempts = [];
+      let totalMs = 0;
+      $('run').disabled = true;
+      $('sprog').textContent = 'Starting…';
+
+      try {
+        for (let trial = 0; trial < M; trial++) {
+          const seed = Math.random().toString(36).slice(2);
+          const t0 = performance.now();
+          let n = 0;
+
+          while (true) {
+            n++;
+            if ((await sha(seed + ':' + n)).startsWith(prefix)) break;
+            if (n % 1500 === 0) await yieldUI();
+          }
+
+          attempts.push(n);
+          totalMs += performance.now() - t0;
+
+          if (trial % 5 === 0) {
+            $('sprog').textContent = `Run ${trial + 1}/${M}`;
+            await yieldUI();
+          }
+        }
+
+        const sum = attempts.reduce((a, b) => a + b, 0);
+        const mean = sum / M;
+        const variance = attempts.reduce((a, b) => a + (b - mean) ** 2, 0) / (M - 1);
+        const sd = Math.sqrt(variance);
+        const ci = 1.96 * sd / Math.sqrt(M);
+
+        const counts = new Map();
+        attempts.forEach(n => counts.set(n, (counts.get(n) || 0) + 1));
+        let D = 0;
+        let cumulative = 0;
+        for (const n of [...counts.keys()].sort((a, b) => a - b)) {
+          const before = cumulative / M;                       
+          cumulative += counts.get(n);
+          const after = cumulative / M;                        
+          const F = 1 - Math.pow(1 - p, n);                    
+          const Fprev = 1 - Math.pow(1 - p, n - 1);            
+          D = Math.max(D, Math.abs(after - F), Math.abs(before - Fprev));
+        }
+
+        const row = $('stab').insertRow(-1);
+        [
+          d,
+          M,
+          mean.toFixed(1),
+          (1 / p).toFixed(0),
+          `${(mean - ci).toFixed(0)}–${(mean + ci).toFixed(0)}`,
+          variance.toFixed(0),
+          ((1 - p) / (p * p)).toFixed(0),
+          (sd / mean).toFixed(2),
+          D.toFixed(3),
+          (1.36 / Math.sqrt(M)).toFixed(3),
+          Math.round(sum / (totalMs / 1000))
+        ].forEach(value => {
+          row.insertCell().textContent = value;
+        });
+
+        drawHist(attempts, p);
+        $('sprog').textContent = `Done: ${M} runs, average time ${(totalMs / M).toFixed(1)} ms per block.`;
+      } finally {
+        $('run').disabled = false;
+      }
+    };
+
+
+    function nakamoto(q, z) {
+      const p = 1 - q;
+      if (q >= p) return 1;
+
+      const lambda = z * q / p;
+      let result = 1;
+      let poisson = Math.exp(-lambda); 
+
+      for (let k = 0; k <= z; k++) {
+        result -= poisson * (1 - Math.pow(q / p, z - k));
+        poisson *= lambda / (k + 1);     
+      }
+      return Math.max(0, result);
+    }
+
+    function exact(q, z) {
+      const p = 1 - q;
+      if (q >= p || z === 0) return 1;
+
+      let result = 1;
+      let binom = 1;                     
+
+      for (let m = 0; m <= z; m++) {
+        if (m) binom *= (z - 1 + m) / m;
+        result -= binom * (Math.pow(p, z) * Math.pow(q, m) - Math.pow(p, m) * Math.pow(q, z));
+      }
+      return Math.max(0, result);
+    }
+
+    async function monteCarlo(q, z, runs = 20000) {
+      let wins = 0;
+
+      for (let i = 0; i < runs; i++) {
+        let honest = 0;
+        let attacker = 0;
+
+        while (honest < z) {
+          Math.random() < q ? attacker++ : honest++;
+        }
+
+        let deficit = z - attacker;
+        while (deficit > 0 && deficit < 60) {
+          deficit += Math.random() < q ? -1 : 1;
+        }
+
+        if (deficit <= 0) wins++;
+
+        if (i % 5000 === 4999) await yieldUI();
+      }
+      return wins / runs;
+    }
+
+    function percent(x) {
+      if (!isFinite(x) || x <= 0) return '0%';
+      if (x < 1e-15) return '< 1e-13%';            // below floating-point noise
+      if (x < 1e-6) return (x * 100).toExponential(1) + '%';
+      return (x * 100).toFixed(x < 0.01 ? 4 : 2) + '%';
+    }
+
+    $('calc').onclick = async () => {
+      const q = Math.min(0.49, Math.max(0.01, +$('q').value || 0.1));
+      const z = Math.min(50, Math.max(0, Math.round(+$('z').value)));
+      $('q').value = q;
+      $('z').value = z;
+
+      $('rN').textContent = percent(nakamoto(q, z));
+      $('rE').textContent = percent(exact(q, z));
+
+      $('rM').textContent = 'computing…';
+      await yieldUI();
+      $('rM').textContent = percent(await monteCarlo(q, z));
+    };
+
+    function renderRiskTable() {
+      const model = $('mod').value === 'e' ? exact : nakamoto;
+      const zs = [0, 1, 2, 3, 6, 10, 20];
+      const qs = [0.1, 0.2, 0.3, 0.4, 0.45];
+
+      const header = '<tr><th>q \\ z</th>'
+        + zs.map(z => `<th>${z}</th>`).join('')
+        + '<th>z for &lt; 0.1%</th></tr>';
+
+      const rows = qs.map(q => {
+        let minZ = 0;
+        while (model(q, minZ) > 0.001 && minZ < 400) minZ++;
+        const minZText = minZ >= 400 ? '&gt;400' : String(minZ);
+
+        const cells = zs.map(z => {
+          const risk = model(q, z);
+          const shade = Math.min(0.5, risk * 0.6);
+          return `<td style="background: rgba(179,52,43,${shade})">${percent(risk)}</td>`;
+        }).join('');
+
+        return `<tr><td>${q}</td>${cells}<td>${minZText}</td></tr>`;
+      }).join('');
+
+      $('dtab').innerHTML = header + rows;
+    }
+
+    $('mod').onchange = renderRiskTable;
+    renderRiskTable();
+    $('calc').click();
+  </script>
+
+</body>
+
+</html>
